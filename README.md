@@ -92,3 +92,23 @@ php bin/console server:status
 ## 🧠 Créditos
 
 Este proyecto ha sido desarrollado como parte del Trabajo Fin de Grado, con el que aprendo desarrollo fullstack con Symfony + Angular en entornos Dockerizados.
+
+---
+
+## `📫 Contacta conmigo:`
+
+[![Gmail](https://img.shields.io/badge/-GMAIL-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:jgomezbeltran88@gmail.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-informational?style=for-the-badge&logo=linkedin&logoColor=fff&color=0077B5)](https://www.linkedin.com/in/jesusgb-dev/)
+[![Portfolio](https://img.shields.io/badge/-Portfolio-lightgray?style=for-the-badge&logo=stackoverflow&logoColor=white)](https://j3susgb.github.io/Portfolio/)
+[![Linktree](https://img.shields.io/badge/-Linktree-323330?style=for-the-badge&logo=linktree&logoColor=#41e45f)](https://linktr.ee/jesusgb)
+
+## `✔️ Consulta los Repositorios y no olvides dar una estrella ⬇️`
+
+:star: From [J3susGB](https://github.com/J3susGB?tab=repositories)
+
+[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](hhttps://github.com/J3susGB?tab=repositories)  
+
+ 
+***************************************************************
+
+Hecho con ❤️ por: Jesús G.B 🚀
