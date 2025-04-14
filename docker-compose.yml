@@ -1,19 +1,20 @@
+
 services:
   db:
     image: postgres:15
     container_name: postgres_db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ca_sevilla_user
-      POSTGRES_PASSWORD: 8QJrUjvs
-      POSTGRES_DB: ca_sevilla_db
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+    restart: always
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_DB: ca_sevilla_db
+      POSTGRES_USER: ca_sevilla_user
+      POSTGRES_PASSWORD: "8QJrUjvs"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ca_sevilla_user"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
 
@@ -29,18 +30,30 @@ services:
       db:
         condition: service_healthy
     environment:
-        DATABASE_URL: pgsql://ca_sevilla_user:8QJrUjvs@db:5432/ca_sevilla_db
+      DATABASE_URL: postgres://ca_sevilla_user:8QJrUjvs@db:5432/ca_sevilla_db
     ports:
       - "8000:8000"
     command: >
       bash -c "
-        until pg_isready -h db -U ca_sevilla_user -d ca_sevilla_db; do
+        until PGPASSWORD=8QJrUjvs psql -h db -U ca_sevilla_user -d ca_sevilla_db -c 'SELECT 1'; do
+          echo 'Waiting for Postgres to be ready...';
           sleep 2;
         done;
         composer install;
         php -S 0.0.0.0:8000 -t public
       "
 
+  frontend:
+    container_name: angular_frontend
+    build:
+      context: ./angular-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./angular-frontend:/app
+    working_dir: /app
+    command: npm run start -- --host 0.0.0.0
+
 volumes:
   pgdata:
-
