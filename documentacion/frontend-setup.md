@@ -1,4 +1,4 @@
-# 🧰 Frontend Setup - Angular 17 + TailwindCSS 3.3 + Docker
+# 🎨 Frontend Setup - Angular 17 + TailwindCSS 3.3 + Docker
 
 Este documento detalla cómo levantar y desarrollar el entorno frontend de este proyecto usando Angular 17, TailwindCSS y Docker.
 

@@ -25,8 +25,8 @@ Con este sistema, se pretende facilitar enormemente el trabajo administrativo, e
 
 | Parte       | Tecnología         | Versión aproximada |
 |-------------|--------------------|---------------------|
-| Frontend    | Angular            | Pendiente           |
-| Estilos     | Tailwind CSS       | Pendiente           |
+| Frontend    | Angular            | 19.2                |
+| Estilos     | Tailwind CSS       | 3.5                 |
 | Backend     | Symfony            | 6.4.20              |
 | Base de datos | PostgreSQL       | 15.0                |
 | Orquestación | Docker Compose    | Última estable      |
@@ -72,7 +72,7 @@ docker-compose up -d --build
 
 Consulta la guía detallada de instalación y configuración del entorno Symfony + PostgreSQL aquí:
 
-👉 [Backend](https://github.com/J3susGB/CA-Sevilla_administration/blob/main/documentacion/backend-setup.md)
+⚙️ [Backend](https://github.com/J3susGB/CA-Sevilla_administration/blob/main/documentacion/backend-setup.md)
 
 ---
 
@@ -80,7 +80,7 @@ Consulta la guía detallada de instalación y configuración del entorno Symfony
 
 Consulta la guía detallada de instalación y configuración del entorno Angular + Tailwind aquí:
 
-👉 [Frontend](https://github.com/J3susGB/CA-Sevilla_administration/blob/main/documentacion/frontend-setup.md)
+🎨 [Frontend](https://github.com/J3susGB/CA-Sevilla_administration/blob/main/documentacion/frontend-setup.md)
 
 ---
 
