@@ -1,15 +1,31 @@
 
 # 📦 CA-SEVILLA_ADMINISTRATION
 
-Este proyecto es una aplicación web full-stack desarrollada con **Angular** en el frontend y **Symfony** en el backend, diseñada para administrar y gestionar entidades internas (como tareas, usuarios u otros módulos que se irán añadiendo). Todo el entorno está montado y orquestado con **Docker Compose**.
+Proyecto de administración para la Delegación de Árbitros de Sevilla desarrollado con Symfony (backend) y Angular (frontend).
 
 ---
+
+## 🧭 Descripción del proyecto
+
+Esta aplicación web surge como una solución integral para automatizar la gestión interna de la Delegación de Árbitros de Sevilla. Actualmente, muchas tareas se realizan de forma manual y dispersa utilizando archivos Excel. Este sistema centraliza y digitaliza todos los procesos, con el objetivo de generar automáticamente la clasificación final de cada árbitro o árbitra en base a su rendimiento y participación.
+
+Entre sus funcionalidades principales destacan:
+
+- Control de asistencia a clases teóricas y prácticas (puntuable)
+- Control de asistencia a entrenamientos (puntuable)
+- Registro de notas de test online, exámenes teóricos e informes arbitrales
+- Gestión de bonificaciones según participación
+- Elaboración automática de clasificaciones
+- Sistema interno de reportes de talento (con acceso mediante token)
+- Roles personalizados por tipo de usuario (Administrador, Capacitación, Información, Clasificación, Profesor, Público)
+
+Con este sistema, se pretende facilitar enormemente el trabajo administrativo, evitando procesos repetitivos y mejorando la trazabilidad y transparencia de la información.
 
 ## 🚀 Tecnologías Utilizadas
 
 | Parte       | Tecnología         | Versión aproximada |
 |-------------|--------------------|---------------------|
-| Frontend    | Angular            |                     |
+| Frontend    | Angular            | Pendiente           |
 | Estilos     | Tailwind CSS       | Pendiente           |
 | Backend     | Symfony            | 6.4.20              |
 | Base de datos | PostgreSQL       | 15.0                |
@@ -20,12 +36,13 @@ Este proyecto es una aplicación web full-stack desarrollada con **Angular** en 
 ## 📂 Estructura del Proyecto
 
 ```
-📁 angular-frontend       → Aplicación Angular (standalone)
-📁 symfony-backend        → Proyecto Symfony (API REST)
-📁 documentation          → Documentación del proyecto
-├── backend-setup.md      → Guía detallada del backend
-docker-compose.yml        → Orquestación de servicios (Angular, Symfony, PostgreSQL)
-README.md                 → Este archivo 😄
+📁 angular-frontend       → Frontend Angular (por desarrollar)
+📁 symfony-backend        → Backend Symfony 6.4
+📁 documentation          
+├── backend-setup.md      → Documentación técnica completa del backend
+├── frontend-setup.md     → Documentación técnica del frontend (pendiente)
+docker-compose.yml        
+README.md                 
 ```
 
 ---
@@ -51,15 +68,15 @@ docker-compose up -d --build
 
 ---
 
-## 📘 Documentación del Backend
+## 📘 Puesta en marcha del Backend
 
-Toda la configuración tanto de Frontend como del backend están en:
+Consulta la guía detallada de instalación y configuración del entorno Symfony + PostgreSQL aquí:
 
 👉 [Backend](https://github.com/J3susGB/CA-Sevilla_administration/blob/main/documentacion/backend-setup.md)
 
 ---
 
-## 🧪 Funcionalidades Implementadas (Hasta Ahora)
+## ✅ Funcionalidades Implementadas (Hasta Ahora)
 
 - Puesta en marcha del Backend de la aplicación.
 
@@ -85,7 +102,14 @@ php bin/console server:status
 
 ## 📝 Próximos Pasos (Roadmap)
 
-- [ ] Puesta en marcha del Frontend
+- [ ] Iniciar el desarrollo del frontend (Angular)
+
+---
+
+## 🎯 Motivación
+
+El proyecto nace de una necesidad real: actualmente, el control de entrenamientos y la generación de clasificaciones se hace de forma manual, usando archivos Excel enviados por compañero.  
+Este sistema permitirá que cada persona suba directamente sus datos a través de la plataforma, automatizando la generación de clasificaciones y reduciendo la carga de trabajo administrativa.
 
 ---
 
@@ -106,7 +130,7 @@ Este proyecto ha sido desarrollado como parte del Trabajo Fin de Grado, con el q
 
 :star: From [J3susGB](https://github.com/J3susGB?tab=repositories)
 
-[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](hhttps://github.com/J3susGB?tab=repositories)  
+[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/J3susGB?tab=repositories)
 
  
 ***************************************************************
