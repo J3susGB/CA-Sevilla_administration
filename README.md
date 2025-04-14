@@ -55,7 +55,7 @@ docker-compose up -d --build
 
 Toda la configuración tanto de Frontend como del backend están en:
 
-👉 [Backend](./documentation/backend-setup.md)
+👉 [Backend](https://github.com/J3susGB/CA-Sevilla_administration/blob/main/documentacion/backend-setup.md)
 
 ---
 
