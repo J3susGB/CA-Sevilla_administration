@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ca_sevilla_user
+      POSTGRES_PASSWORD: 8QJrUjvs
+      POSTGRES_DB: ca_sevilla_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ca_sevilla_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./symfony-backend
+      dockerfile: ./docker/php/Dockerfile
+    container_name: symfony_backend
+    working_dir: /var/www/app
+    volumes:
+      - ./symfony-backend/app:/var/www/app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+        DATABASE_URL: pgsql://ca_sevilla_user:8QJrUjvs@db:5432/ca_sevilla_db
+    ports:
+      - "8000:8000"
+    command: >
+      bash -c "
+        until pg_isready -h db -U ca_sevilla_user -d ca_sevilla_db; do
+          sleep 2;
+        done;
+        composer install;
+        php -S 0.0.0.0:8000 -t public
+      "
+
+volumes:
+  pgdata:
+
