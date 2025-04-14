@@ -76,9 +76,18 @@ Consulta la guía detallada de instalación y configuración del entorno Symfony
 
 ---
 
+## 📘 Puesta en marcha del Frontend
+
+Consulta la guía detallada de instalación y configuración del entorno Angular + Tailwind aquí:
+
+👉 [Frontend](https://github.com/J3susGB/CA-Sevilla_administration/blob/main/documentacion/frontend-setup.md)
+
+---
+
 ## ✅ Funcionalidades Implementadas (Hasta Ahora)
 
 - Puesta en marcha del Backend de la aplicación.
+- Puesta en marcha del Frontend de la aplicación.
 
 ---
 
@@ -88,12 +97,6 @@ Consulta la guía detallada de instalación y configuración del entorno Symfony
 # Acceder al contenedor de Symfony
 docker exec -it symfony_backend bash
 
-# Crear migraciones (dentro del contenedor)
-php bin/console make:migration
-
-# Ejecutar migraciones
-php bin/console doctrine:migrations:migrate
-
 # Ver estado del servidor Symfony
 php bin/console server:status
 ```
@@ -102,8 +105,8 @@ php bin/console server:status
 
 ## 📝 Próximos Pasos (Roadmap)
 
-- [ ] Iniciar el desarrollo del frontend (Angular)
-
+- [ ] Diseñar Base de datos
+- [ ] Crear la entidad usuarios
 ---
 
 ## 🎯 Motivación
