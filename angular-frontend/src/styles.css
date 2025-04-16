@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .contenedor_xl {
+      @apply max-w-[1700px] w-[95%] mx-auto;
+    }
+}
+
+@layer utilities {
+    .contenedor_md {
+      @apply max-w-[1200px] w-[95%] mx-auto;
+    }
+}
+
+@layer utilities {
+    .contenedor_sm {
+      @apply max-w-[800px] w-[95%] mx-auto;
+    }
+}
+
+
+@layer utilities {
+    .bg-gradient-principal {
+      @apply bg-gradient-to-br from-[#DCDCDC] via-[#A9A9A9] to-[#C0C0C0];
+    }
+}
+
+@layer utilities {
+    .bg-gradient-secundario {
+      @apply bg-gradient-to-br from-[#4f9e9e] via-[#3a6e6e] to-[#254d4d];
+    }
+}
+
+@layer utilities {
+    .boton {
+      @apply p-2 my-10 rounded-md bg-yellow-600 text-white font-bold cursor-pointer border border-transparent transition-colors duration-300 ease-in-out;
+      @apply hover:bg-yellow-700 hover:text-yellow-100 hover:border-yellow-700 hover:shadow-md;
+    }
+}
+  
