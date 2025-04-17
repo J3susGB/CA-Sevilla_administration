@@ -1,14 +1,16 @@
 {
   "name": "angular-frontend",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --host 0.0.0.0",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "optimize:once": "node scripts/convert-images.js",
+    "watch:images": "node scripts/watch-images.js"
   },
-  "private": true,
   "dependencies": {
     "@angular/common": "^19.2.0",
     "@angular/compiler": "^19.2.0",
@@ -28,6 +30,8 @@
     "@tailwindcss/postcss": "^4.1.4",
     "@types/jasmine": "~5.1.0",
     "autoprefixer": "^10.4.21",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.1.2",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -35,6 +39,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.5.3",
+    "sharp": "^0.34.1",
     "tailwindcss": "^3.3.5",
     "typescript": "~5.7.2"
   }

@@ -1,4 +1,3 @@
-
 services:
   db:
     image: postgres:15
@@ -53,7 +52,17 @@ services:
     volumes:
       - ./angular-frontend:/app
     working_dir: /app
-    command: npm run start -- --host 0.0.0.0
+    command: npm start
+
+  image_watcher:
+    container_name: image_watcher
+    build:
+      context: ./angular-frontend
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: npm run watch:images
+    volumes:
+      - ./angular-frontend:/app
 
 volumes:
   pgdata:
