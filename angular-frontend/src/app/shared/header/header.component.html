@@ -1,14 +1,26 @@
 <header class="text-logo color-letra bg-gradient-secundario h-20 sm:h-32 md:h-32 p-3 flex flex-row justify-between items-center">
-    <div>
-      <h1 class="font-logo ml-0 sm:ml-5 md:ml-5 text-[30px] sm:text-[30px] md:text-[30px] lg:text-5xl xl:text-6xl font-bold">
+    
+  <div>
+      <h1 class="font-logo ml-0 sm:ml-5 md:ml-5 lg:ml-20 text-[30px] sm:text-[30px] md:text-[30px] lg:text-5xl xl:text-6xl font-bold">
         Delegación Árbitros Sevilla
       </h1>      
     </div>
-    <picture class="w-8 h-8 lg:w-10 lg:h-10 cursor-pointer">
-      <source srcset="/assets/optimized/cerrar.avif" type="image/avif" />  
-      <source srcset="/assets/optimized/cerrar.webp" type="image/webp" />
-      <img src="/assets/optimized/cerrar.png" alt="Icono para cerrar sesión" class="w-full h-full" />
-    </picture>    
+
+    <form class="mr-0 sm:mr-5 md:mr-5 lg:mr-20">
+      <button type="submit" class="border-none bg-transparent p-0">
+        <picture class="w-8 h-8 lg:w-10 lg:h-10">
+          <source srcset="/assets/optimized/cerrar.avif" type="image/avif" />  
+          <source srcset="/assets/optimized/cerrar.webp" type="image/webp" />
+          <img 
+            loading="lazy" 
+            src="/assets/optimized/cerrar.png" 
+            alt="Icono para cerrar sesión" 
+            class="w-full h-full cursor-pointer transition-all duration-300 ease-in-out hover:scale-110 hover:animate-pulse2 shadow-md" 
+          />
+        </picture> 
+      </button>
+    </form>
+
   </header>
   
   

@@ -19,6 +19,16 @@ module.exports = {
           mediana: "1.125rem", // entre base y lg
           logo_letra: "2.75rem", // títulos o logo
         },
+        keyframes: {
+          pulse2: {
+            '0%': { boxShadow: '0 0 0 0 rgba(30, 27, 75, 0.5)', borderRadius: '9999px' },
+            '70%': { boxShadow: '0 0 0 0.7rem rgba(30, 27, 75, 0)', borderRadius: '9999px' },
+            '100%': { boxShadow: '0 0 0 0 rgba(30, 27, 75, 0)', borderRadius: '9999px' },
+          },
+        },
+        animation: {
+          pulse2: 'pulse2 1s infinite',
+        },
       },
     },
     plugins: [],
