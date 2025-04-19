@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
 @layer utilities {
     .contenedor_xl {
       @apply max-w-[1700px] w-[95%] mx-auto;
@@ -35,7 +42,7 @@
 
 @layer utilities {
     .boton {
-      @apply p-2 my-10 rounded-md bg-yellow-600 text-white font-bold cursor-pointer border border-transparent transition-colors duration-300 ease-in-out;
+      @apply p-2 rounded-md bg-yellow-600 text-white font-bold cursor-pointer border border-transparent transition-colors duration-300 ease-in-out;
       @apply hover:bg-yellow-700 hover:text-yellow-100 hover:border-yellow-700 hover:shadow-md;
     }
 }
