@@ -13,6 +13,7 @@ module.exports = {
           logo: "#D1D5DB",
           letra: "#3B3B3B",
           bordes: "#3a6d6e",
+          bordes_hover: "#609596",
         },
         fontSize: {
           xs2: "0.65rem", // Extra pequeño

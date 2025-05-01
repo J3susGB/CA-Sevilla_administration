@@ -33,7 +33,7 @@
               },
               {
                 "glob": "**/*",
-                "input": "src/assets/optimized",
+                "input": "src/app/assets/optimized",
                 "output": "assets/optimized"
               }
             ],
@@ -102,7 +102,7 @@
               },
               {
                 "glob": "**/*",
-                "input": "src/assets/optimized",
+                "input": "src/app/assets/optimized",
                 "output": "assets/optimized"
               }
             ],

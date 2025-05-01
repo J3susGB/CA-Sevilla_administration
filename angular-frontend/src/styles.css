@@ -5,13 +5,12 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
   height: 100%;
 }
 
 @layer utilities {
     .contenedor_xl {
-      @apply max-w-[1700px] w-[95%] mx-auto;
+      @apply max-w-[1700px] w-[95%] mx-auto mt-8;
     }
 }
 

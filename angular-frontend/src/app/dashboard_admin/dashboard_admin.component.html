@@ -1,0 +1,134 @@
+<div class="contenedor_xl">
+  <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+    Panel de Administración
+  </h2>
+
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mx-auto bg-letra p-10 rounded-2xl shadow-xl"
+  >
+    <!-- Botones normales -->
+    <a
+      href="https://www.rfaf.es/pnfg/#google_vignette"
+      target="_blank"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >RFAF
+    </a>
+    <a
+      href="https://intranet.rfaf.es/nfg/"
+      target="_blank"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >Intranet
+    </a>
+    <a
+      href="https://gestion-imd.domcloud.dev/"
+      target="_blank"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >API
+    </a>
+    <a
+      routerlink="#"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >Árbitros
+    </a>
+    <a
+      routerlink="#"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >Usuarios
+    </a>
+    <a
+      routerlink="#"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >Profesores
+    </a>
+    <a
+      routerlink="#"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >Bonificaciones
+    </a>
+    <a
+      routerlink="#"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >Entrenamientos
+    </a>
+    <a
+      routerlink="#"
+      class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+      >Reportes
+    </a>
+
+    <!-- Celda del botón Vocalías + acordeón -->
+    <div class="relative flex flex-col lg:flex-row gap-2 self-start">
+      <!-- Botón Vocalías -->
+      <button
+        (click)="toggleVocalias()"
+        class="flex items-center justify-between bg-yellow-600 text-gray-900 font-bold rounded-lg p-6 text-lg uppercase transition-all hover:bg-yellow-500 hover:scale-105 w-full"
+      >
+        <span class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+          Vocalías
+        </span>
+        <svg
+          [ngClass]="{
+            'rotate-180': vocaliasOpen,
+            'lg:rotate-90': vocaliasOpen,
+            'lg:-rotate-90': !vocaliasOpen
+          }"
+          class="ml-2 h-5 w-5 transform transition-transform duration-300"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      <!-- Acordeón de Vocalías -->
+      <div
+        class="static lg:absolute top-auto lg:top-0 left-0 lg:left-full w-full lg:w-auto mt-2 lg:mt-0 lg:ml-10 transition-all duration-500 ease-in-out origin-top-left lg:origin-top-none"
+        [ngClass]="
+          vocaliasOpen
+            ? 'max-h-96 opacity-100'
+            : 'max-h-0 opacity-0 overflow-hidden'
+        "
+      >
+        <div
+          class="flex flex-col lg:flex-row gap-6 w-full lg:min-w-max bg-letra p-4 rounded-lg shadow-lg"
+        >
+          <a
+            routerlink="/admin/vocalias/capacitacion"
+            class="cursor-pointer flex items-center gap-2 text-logo bg-bordes rounded-lg p-4 text-base uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+            >Capacitación</a
+          >
+          <a
+            routerlink="/admin/vocalias/informacion"
+            class="cursor-pointer flex items-center gap-2 text-logo bg-bordes rounded-lg p-4 text-base uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+            >Información</a
+          >
+          <a
+            routerlink="/admin/vocalias/clasificacion"
+            class="cursor-pointer flex items-center gap-2 text-logo bg-bordes rounded-lg p-4 text-base uppercase transition-all hover:bg-bordes_hover hover:scale-105"
+            >Clasificación</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
