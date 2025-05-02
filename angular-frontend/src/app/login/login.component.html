@@ -15,7 +15,7 @@
   <div class="absolute inset-0 flex items-start justify-center pt-32 z-10">
     <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8 w-full max-w-md mx-4">
       <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">Iniciar Sesión</h2>
-      <form class="flex flex-col space-y-4">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col space-y-4">
         <div>
           <label class="block text-gray-700 text-sm font-bold mb-2" for="usuario">
             Usuario
@@ -23,9 +23,13 @@
           <input
             id="usuario"
             type="text"
+            formControlName="username"
             placeholder="sjsantizo"
             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
+          <div *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid" class="text-red-500 text-sm mt-1">
+            Usuario inválido
+          </div>
         </div>
       
         <div>
@@ -35,9 +39,14 @@
           <input
             id="password"
             type="password"
+            formControlName="password"
             placeholder="••••••••"
             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
+          <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="text-red-500 text-sm mt-1">
+            Contraseña inválida
+          </div>
+
           <!-- Enlace de olvido de contraseña -->
           <div class="text-right mt-2">
             <a href="#" class="text-sm text-indigo-800 hover:text-indigo-800 transition-colors duration-300">
@@ -49,7 +58,8 @@
         <div class="flex justify-end">
           <button
             type="submit"
-            class="boton"
+            [disabled]="loginForm.invalid"
+            class="boton disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Entrar
           </button>
