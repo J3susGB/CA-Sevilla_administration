@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -11,10 +12,21 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent {
   
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   shouldShowLogoutButton(): boolean {
     const url = this.router.url;
     return !(url === '/' || url.includes('login') || url.includes('reporte'));
+  }
+
+  logout(): void {
+    // 1) Limpiar estado local (token, usuario, etc.)
+    this.authService.clearSession();
+
+    // 3) Redirigir al login
+    this.router.navigate(['/login']);
   }
 }
