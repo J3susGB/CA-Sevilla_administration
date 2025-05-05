@@ -1,34 +1,50 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+// angular-frontend/src/app/login/login.component.ts
+
+import { Component }                from '@angular/core';
+import { Router }                   from '@angular/router';
+import { FormBuilder, FormGroup, Validators }  from '@angular/forms';
+import { CommonModule }             from '@angular/common';
+import { ReactiveFormsModule }      from '@angular/forms';
+import { AuthService }              from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  loginForm: FormGroup;
+  loginError: string | null = null;
 
-  constructor(private fb: FormBuilder) {
-    //Se crea formulario reactivo con validaciones
+  loginForm!: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required]], // username requerido
-      password: ['', [Validators.required, Validators.minLength(6)]] //Password requerido y mínimo 6 caracteres
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
-  //Función que se llama al enviar el formulario
   onSubmit() {
     if (this.loginForm.invalid) {
-      console.log('Formulario inválido');
       return;
     }
+    this.loginError = null;
 
-    //Aquí iría la llamada al backend
-    console.log('Datos del formulrio:', this.loginForm.value);
+    const { username, password } = this.loginForm.value;
+    this.authService.login({ username, password }).subscribe({
+      next: () => {
+        this.router.navigate(['dashboard']);
+      },
+      error: () => {
+        this.loginError = 'Credenciales inválidas';
+      }
+    });
   }
 }
