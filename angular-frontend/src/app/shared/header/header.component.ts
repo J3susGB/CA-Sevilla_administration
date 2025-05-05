@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router }     from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
+import { AuthService }  from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -11,10 +11,9 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent {
-  
   constructor(
     private router: Router,
-    private authService: AuthService
+    public authService: AuthService  // público para usar getUsername() en el template
   ) {}
 
   shouldShowLogoutButton(): boolean {
@@ -23,10 +22,10 @@ export class HeaderComponent {
   }
 
   logout(): void {
-    // 1) Limpiar estado local (token, usuario, etc.)
-    this.authService.clearSession();
+    // 1) Limpiar estado local (token + username)
+    this.authService.logout();
 
-    // 3) Redirigir al login
+    // 2) Redirigir al login
     this.router.navigate(['/login']);
   }
 }

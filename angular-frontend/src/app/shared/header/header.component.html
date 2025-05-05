@@ -10,10 +10,18 @@
     </h1>
   </div>
 
+  <!-- Contenedor de logout + username -->
   <div
     *ngIf="shouldShowLogoutButton()"
-    class="mr-0 sm:mr-5 md:mr-5 lg:mr-20"
+    class="mr-0 sm:mr-5 md:mr-5 lg:mr-20 flex flex-col lg:flex-row lg:items-center items-end gap-2 lg:gap-5"
   >
+    <!-- Muestro el username justo debajo del botón, alineado a la derecha -->
+    <span
+      *ngIf="authService.getUsername()"
+      class="mt-1 text-xs2 md:text-xs lg:text-base text-white "
+    >
+      Usuario: {{ authService.getUsername() }}
+    </span>
     <button
       type="button"
       (click)="logout()"
@@ -21,10 +29,7 @@
     >
       <picture class="w-8 h-8 lg:w-10 lg:h-10">
         <source srcset="/assets/optimized/cerrar.avif" type="image/avif" />
-        <source
-          srcset="/assets/optimized/cerrar.webp"
-          type="image/webp"
-        />
+        <source srcset="/assets/optimized/cerrar.webp" type="image/webp" />
         <img
           loading="lazy"
           src="/assets/optimized/cerrar.png"
