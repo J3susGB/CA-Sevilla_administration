@@ -1,0 +1,14 @@
+<div class="contenedor_xl">
+    <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+      Panel de Administración
+    </h2>
+    <table>
+    <tr><th>ID</th><th>Usuario</th><th>Email</th><th>Roles</th></tr>
+    <tr *ngFor="let u of users">
+        <td>{{u.id}}</td>
+        <td>{{u.username}}</td>
+        <td>{{u.email}}</td>
+        <td>{{u.roles.join(', ')}}</td>
+    </tr>
+    </table>
+</div>
