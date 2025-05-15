@@ -6,8 +6,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-dashboard-admin',
   standalone: true,
   imports: [RouterModule, CommonModule],
-  templateUrl: './dashboard_admin.component.html',
-  styleUrls: ['./dashboard_admin.component.css']
+  templateUrl: './dashboard-admin.component.html',
+  styleUrls: ['./dashboard-admin.component.css']
 })
 export class DashboardAdminComponent {
     vocaliasOpen = false;  // Control del acordeón
