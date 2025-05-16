@@ -41,8 +41,8 @@ html, body {
 
 @layer utilities {
     .boton {
-      @apply p-2 rounded-md bg-yellow-600 text-white font-bold cursor-pointer border border-transparent transition-colors duration-300 ease-in-out;
-      @apply hover:bg-yellow-700 hover:text-yellow-100 hover:border-yellow-700 hover:shadow-md;
+      @apply p-2 rounded-md bg-yellow-600 text-white font-bold cursor-pointer border border-transparent transition-shadow duration-300 ease-in-out;
+      @apply hover:border-yellow-700 hover:shadow-lg;
     }
 }
   

@@ -17,6 +17,7 @@ module.exports = {
         },
         fontSize: {
           xs2: "0.65rem", // Extra pequeño
+          xs3: "0.80rem",
           mediana: "1.125rem", // entre base y lg
           logo_letra: "2.75rem", // títulos o logo
         },

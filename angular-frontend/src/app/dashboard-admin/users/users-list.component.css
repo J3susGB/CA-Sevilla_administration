@@ -1,0 +1,56 @@
+/* Sólo aplica en pantallas < 660px */
+@media (max-width: 660px) {
+    /* Ocultamos la cabecera */
+    .tabla-responsive thead {
+      display: none;
+    }
+  
+    /* Cada tabla, cuerpo, fila y celda a bloque */
+    .tabla-responsive,
+    .tabla-responsive tbody,
+    .tabla-responsive tr,
+    .tabla-responsive td {
+      display: block;
+      width: 100%;
+    }
+  
+    /* Estilo “card” para cada fila */
+    .tabla-responsive tr {
+      background-color: #C0C0C0;
+      
+      border-radius: 0.5rem;             /* bordes suaves */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1rem;                     /* altura interna para respirar */
+    }
+  
+    /* Cada celda en la fila como flex para alinear etiqueta + contenido */
+    .tabla-responsive td {
+      display: flex;
+      align-items: flex-start;
+      padding: 0.5rem 0;
+      text-align: left;                  /* contenido siempre a la izquierda */
+    }
+  
+    /* Antes de cada celda mostramos la etiqueta (data-label) */
+    .tabla-responsive td::before {
+      content: attr(data-label) ":";     /* añade dos puntos tras la etiqueta */
+      font-weight: 600;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+      width: 6rem;                       /* ancho fijo para alinear todas */
+      text-align: left;
+    }
+  
+    /* 1) Ocultamos la etiqueta “Acciones” */
+    .tabla-responsive td[data-label="Acciones"]::before {
+      display: none;
+    }
+  
+    /* 2) Centramos los iconos de acciones al final */
+    .tabla-responsive td[data-label="Acciones"] {
+      justify-content: center;
+      padding-top: 1rem;                /* un poco de espacio arriba */
+      gap: 1rem;                        /* separación entre los dos iconos */
+    }
+  }
+  
