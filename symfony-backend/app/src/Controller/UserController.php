@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-#[Route('/users')]
+#[Route('/api/users')]
 final class UserController extends AbstractController
 {
     private UserPasswordHasherInterface $passwordHasher;
