@@ -1,5 +1,8 @@
 // src/app/app.config.ts
 
+/** URL base de tu API Symfony */
+export const API_URL = 'http://localhost:8000/api';
+
 import { ApplicationConfig, importProvidersFrom }       from '@angular/core';
 import { provideZoneChangeDetection }                   from '@angular/core';
 import { provideRouter }                                from '@angular/router';

@@ -1,12 +1,14 @@
+<!-- src/app/dashboard-admin/users/user-modal/user-modal.component.html -->
+
 <!-- Contenedor y título -->
 <h2 mat-dialog-title class="text-2xl font-bold text-center border-b border-gray-200 pt-4 pb-2">
-  CREAR USUARIO
+  {{ isEditMode ? 'EDITAR USUARIO' : 'CREAR USUARIO' }}
 </h2>
 
 <!-- Contenido con padding -->
 <mat-dialog-content class="px-6 py-4">
   <mat-tab-group class="mb-6">
-    <!-- Pestaña 1: Crear usuario -->
+    <!-- Pestaña 1: Crear/Editar usuario -->
     <mat-tab label="Individual">
       <form [formGroup]="userForm" (ngSubmit)="onCreate()">
         <!-- Campo Usuario -->
@@ -30,6 +32,17 @@
           </mat-error>
         </mat-form-field>
 
+        <!-- Campo Contraseña solo al crear -->
+        <ng-container *ngIf="!isEditMode">
+          <mat-form-field appearance="fill" class="w-full mb-4">
+            <mat-label>Contraseña</mat-label>
+            <input matInput type="password" formControlName="password" required />
+            <mat-error *ngIf="userForm.get('password')?.hasError('required')">
+              Obligatorio
+            </mat-error>
+          </mat-form-field>
+        </ng-container>
+
         <!-- Campo Roles -->
         <mat-form-field appearance="fill" class="w-full mb-44">
           <mat-label>Roles</mat-label>
@@ -43,25 +56,25 @@
           <button 
             mat-button 
             mat-dialog-close 
-            class="text-gray-600 cursor-pointer">Cancelar
+            class="text-gray-600 cursor-pointer">
+            Cancelar
           </button>
           <button mat-flat-button color="primary"
                   class="bg-blue-600 text-white cursor-pointer"
-                  type="submit" 
-          >
-            Crear
+                  type="submit">
+            {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
           </button>
         </mat-dialog-actions>
       </form>
     </mat-tab>
 
-    <!-- Pestaña 2: Carga masiva -->
-    <mat-tab label="Carga masiva">
+    <!-- Pestaña 2: Carga masiva (solo al crear) -->
+    <mat-tab label="Carga masiva" *ngIf="!isEditMode">
       <div class="flex flex-col items-center py-6 space-y-4">
         <p class="text-center">Sube un fichero Excel (.xlsx)</p>
         <input type="file" accept=".xls,.xlsx" (change)="onFileSelected($event)" class="cursor-pointer" />
-        <button mat-flat-button color="primary"
-                class="bg-green-600 hover:bg-green-700 text-white cursor-pointer"
+        <button mat-flat-button color="primary" type="button"
+                class="cursor-pointer"
                 (click)="onUpload()">
           Subir
         </button>

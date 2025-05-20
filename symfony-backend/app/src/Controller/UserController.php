@@ -11,6 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
+
 #[Route('/api/users')]
 final class UserController extends AbstractController
 {
@@ -130,5 +134,81 @@ final class UserController extends AbstractController
         $em->flush();
 
         return $this->json(['message' => 'Usuario eliminado']);
+    }
+
+    #[Route('/bulk-upload', name: 'user_bulk_upload', methods: ['POST'])]
+    public function bulkUpload(Request $request, EntityManagerInterface $em, UserRepository $repo): JsonResponse
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->json(['error' => 'No autorizado'], 403);
+        }
+
+        $file = $request->files->get('file');
+        if (!$file) {
+            return $this->json(['error' => 'No se ha subido ningún archivo'], 400);
+        }
+
+        $tmpPath = sys_get_temp_dir() . '/' . uniqid('bulk_upload_') . '.' . $file->getClientOriginalExtension();
+        $created = [];
+        $ignored = [];
+
+        try {
+            $file->move(dirname($tmpPath), basename($tmpPath));
+            $spreadsheet = IOFactory::load($tmpPath);
+            $sheet       = $spreadsheet->getActiveSheet();
+            $rows        = $sheet->toArray();
+
+            array_shift($rows); // elimina cabecera
+
+            foreach ($rows as $i => $row) {
+                if (count($row) < 4) {
+                    throw new \Exception("Fila $i: faltan columnas (se esperaban 4)");
+                }
+                list($username, $email, $password, $roles) = $row;
+
+                // Comprueba existencia por username o email
+                $exists = $repo->findOneBy(['username' => $username])
+                    || $repo->findOneBy(['email'    => $email]);
+
+                if ($exists) {
+                    $ignored[] = [
+                        'username' => $username,
+                        'email'    => $email,
+                        'reason'   => 'Ya existe username o email'
+                    ];
+                    continue;
+                }
+
+                // Crear nuevo usuario
+                $user = new User();
+                $user->setUsername($username);
+                $user->setEmail($email);
+                $hashed = $this->passwordHasher->hashPassword($user, (string)$password);
+                $user->setPassword($hashed);
+                $user->setRoles(array_map('trim', explode(',', (string)$roles)));
+
+                $em->persist($user);
+                $created[] = [
+                    'username' => $username,
+                    'email'    => $email
+                ];
+            }
+
+            $em->flush();
+
+            return $this->json([
+                'created' => $created,
+                'ignored' => $ignored
+            ], 201);
+        } catch (\Throwable $e) {
+            return $this->json([
+                'error'   => 'Error en carga masiva',
+                'details' => $e->getMessage()
+            ], 500);
+        } finally {
+            if (file_exists($tmpPath)) {
+                @unlink($tmpPath);
+            }
+        }
     }
 }
