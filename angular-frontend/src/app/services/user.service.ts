@@ -21,4 +21,14 @@ export class UserService {
   getAll(): Observable<User[]> {
     return this.http.get<User[]>(this.API_URL);
   }
+
+  /** Crea un usuario */
+  create(user: Partial<User>): Observable<User> {
+    return this.http.post<User>(this.API_URL, user);
+  }
+
+  /** Subida masiva vía Excel */
+  bulkUpload(formData: FormData): Observable<any> {
+    return this.http.post(`${this.API_URL}/bulk-upload`, formData);
+  }
 }

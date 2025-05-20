@@ -8,11 +8,12 @@
   <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
     Gestión de Usuarios
   </h2>
-  <div class="contenedor_md flex justify-end gap-3 mb-2">
-    <button type="button"
-            class="text-xs3 text-letra mr-3 cursor-pointer
-                   transition-colors duration-300 ease-in-out
-                   hover:text-yellow-700 p-1">
+
+  <div class="contenedor_md flex justify-end gap-3 mb-2 text-letra hover:text-yellow-700 transition-color duration-300 ease-in-out">
+    <button mat-flat-button
+            color="primary"
+            (click)="addUser()"
+            class="cursor-pointer">
       <i class="fa-solid fa-plus"></i>
       Añadir
     </button>
@@ -20,7 +21,7 @@
 
   <!-- Clase tabla-responsive para que opere el CSS externo -->
   <table class="contenedor_md tabla-responsive w-full text-left
-                border-collapse rounded-xl overflow-hidden shadow-lg">
+                border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-350">
     <thead class="bg-bordes text-logo uppercase text-sm">
       <tr>
         <th class="px-4 py-3">Usuario</th>

@@ -2,47 +2,136 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
+/* Reset básico */
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
 }
 
+/* Utilidades personalizadas */
 @layer utilities {
-    .contenedor_xl {
-      @apply max-w-[1700px] w-[95%] mx-auto mt-8;
-    }
+  .contenedor_xl {
+    @apply max-w-[1700px] w-[95%] mx-auto mt-8;
+  }
+
+  .contenedor_md {
+    @apply max-w-[1200px] w-[95%] mx-auto;
+  }
+
+  .contenedor_sm {
+    @apply max-w-[800px] w-[95%] mx-auto;
+  }
+
+  .bg-gradient-principal {
+    @apply bg-gradient-to-br from-[#DCDCDC] via-[#A9A9A9] to-[#C0C0C0];
+  }
+
+  .bg-gradient-secundario {
+    @apply bg-gradient-to-br from-[#4f9e9e] via-[#3a6e6e] to-[#254d4d];
+  }
+
+  .boton {
+    @apply p-2 rounded-md bg-yellow-600 text-white font-bold cursor-pointer border border-transparent transition-shadow duration-300 ease-in-out hover:border-yellow-700 hover:shadow-lg;
+  }
 }
 
-@layer utilities {
-    .contenedor_md {
-      @apply max-w-[1200px] w-[95%] mx-auto;
-    }
+/* Estilos de componente (modal + select), todo con @apply válido */
+@layer components {
+
+  /* 1) Diálogo */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-dialog-surface {
+    @apply bg-gray-100 rounded-2xl shadow-2xl p-0 max-w-md mx-4 overflow-visible;
+  }
+
+  /* 2) Título */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-dialog-title {
+    @apply text-2xl font-bold text-center text-logo border-b border-gray-200
+           pt-4 pb-2 bg-bordes rounded-t-2xl;
+  }
+
+  /* 3) Contenido */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-dialog-content {
+    @apply px-6 h-auto;
+  }
+
+  /* 4) Tabs */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-tab-group {
+    @apply mb-6;
+  }
+
+  /* 5) Campos */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-form-field {
+    @apply w-full;
+  }
+
+  /* 6) Botones */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-dialog-actions {
+    @apply px-6 pb-6 flex justify-end align-bottom space-x-4;
+  }
+
+  /* 8) Línea activa de pestaña */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-tab-group.mat-primary .mdc-tab-indicator__content--underline {
+    @apply bg-bordes_hover;
+  }
+
+  /* 9) Redondear bordes de todo el modal */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-dialog-container {
+    @apply rounded-2xl overflow-visible;
+  }
+
+  /* ——————————————————————————————
+     Estilos para la pestaña “Carga masiva”
+     —————————————————————————————— */
+
+  /* 10) Alineamos el contenido exactamente igual que la primera pestaña */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-tab-body.mat-mdc-tab-body-active:nth-child(2) {
+    @apply px-6 py-4 flex flex-col space-y-4;
+  }
+
+  /* 11) Estilo al párrafo central */
+  .cdk-overlay-pane.user-modal-dialog .mat-mdc-tab-body.mat-mdc-tab-body-active:nth-child(2) p {
+    @apply text-base text-center mb-2;
+  }
+
+  /* 12) Input de fichero para que parezca un campo de Material */
+  .cdk-overlay-pane.user-modal-dialog
+    .mat-mdc-tab-body.mat-mdc-tab-body-active:nth-child(2)
+    input[type="file"] {
+    @apply border border-gray-300 rounded-md p-2 w-full cursor-pointer;
+  }
+
+  /* 13) Botón “Subir” igual que “Crear” */
+  .cdk-overlay-pane.user-modal-dialog
+    .mat-mdc-tab-body.mat-mdc-tab-body-active:nth-child(2)
+    button[mat-flat-button] {
+    @apply bg-yellow-600 text-white rounded-md;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+  .cdk-overlay-pane.user-modal-dialog
+    .mat-mdc-tab-body.mat-mdc-tab-body-active:nth-child(2)
+    button[mat-flat-button]:hover {
+    @apply bg-yellow-700 !important;
+  }
 }
 
-@layer utilities {
-    .contenedor_sm {
-      @apply max-w-[800px] w-[95%] mx-auto;
-    }
+.cdk-overlay-pane.user-modal-dialog button[mat-button] {
+  color: #ef4444;
+  transition: color 0.3s ease;
+}
+/* Hover “Cancelar” (texto) */
+.cdk-overlay-pane.user-modal-dialog button[mat-button]:hover {
+  color: #b91c1c !important; 
 }
 
-
-@layer utilities {
-    .bg-gradient-principal {
-      @apply bg-gradient-to-br from-[#DCDCDC] via-[#A9A9A9] to-[#C0C0C0];
-    }
+.cdk-overlay-pane.user-modal-dialog button[mat-flat-button] {
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-@layer utilities {
-    .bg-gradient-secundario {
-      @apply bg-gradient-to-br from-[#4f9e9e] via-[#3a6e6e] to-[#254d4d];
-    }
+/* Hover “Crear” (fondo + texto) */
+.cdk-overlay-pane.user-modal-dialog button[mat-flat-button]:hover {
+  background-color: #ca8a04 !important; 
+  color:            #ffffff   !important;
 }
-
-@layer utilities {
-    .boton {
-      @apply p-2 rounded-md bg-yellow-600 text-white font-bold cursor-pointer border border-transparent transition-shadow duration-300 ease-in-out;
-      @apply hover:border-yellow-700 hover:shadow-lg;
-    }
-}
-  
