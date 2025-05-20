@@ -35,6 +35,7 @@ export class UsersListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log('ROL DEL USUARIO:', this.auth.getRoles());
     if (!this.auth.getRoles().includes('ROLE_ADMIN')) {
       return;
     }
@@ -46,12 +47,25 @@ export class UsersListComponent implements OnInit {
   }
 
   addUser(): void {
-  this.dialog.open(UserModalComponent, {
-    width: '500px',
-    panelClass: 'user-modal-dialog'    // <<< aquí, STRING
-  }).afterClosed().subscribe(created => {
-    if (created) this.load();
-  });
-}
+    this.dialog.open(UserModalComponent, {
+      width: '500px',
+      panelClass: 'user-modal-dialog'    // <<< aquí, STRING
+    }).afterClosed().subscribe(created => {
+      if (created) this.load();
+    });
+  }
+
+  editUser(u: User): void {
+    this.dialog.open(UserModalComponent, {
+      width: '500px',
+      data: { user: u },
+      panelClass: 'user-modal-dialog'
+    }).afterClosed().subscribe(done => done && this.load());
+  }
+
+  deleteUser(u: User): void {
+    if (!confirm(`¿Eliminar usuario ${u.username}?`)) return;
+    this.userService.delete(u.id!).subscribe(() => this.load());
+  }
 
 }
