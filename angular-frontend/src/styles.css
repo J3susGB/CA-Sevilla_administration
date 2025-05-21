@@ -135,3 +135,14 @@ body {
   background-color: #ca8a04 !important; 
   color:            #ffffff   !important;
 }
+
+.cdk-overlay-pane.user-modal-dialog mat-error {
+  margin-top: 5px;
+  text-align: center;
+  font-size: 0.75rem;           
+  color: #991b1b;               
+  padding: 0.02rem;            
+  border: 2px solid #b65959;   
+  background: #fdd6d6;
+  border-radius: 2px;      
+}

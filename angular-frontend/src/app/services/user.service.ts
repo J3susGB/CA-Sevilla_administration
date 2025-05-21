@@ -43,6 +43,20 @@ export class UserService {
     return this.http.delete(`${this.API_URL}/${id}`);
   }
 
+  checkUsername(username: string): Observable<{ exists: boolean }> {
+    return this.http.post<{ exists: boolean }>(
+      `${this.API_URL}/check-username`,
+      { username }
+    );
+  }
+
+  checkEmail(email: string): Observable<{ exists: boolean }> {
+    return this.http.post<{ exists: boolean }>(
+      `${this.API_URL}/check-email`,
+      { email }
+    );
+  }
+
   /** Bulk upload */
   bulkUpload(form: FormData): Observable<any> {
     return this.http.post(`${this.API_URL}/bulk-upload`, form);

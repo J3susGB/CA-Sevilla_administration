@@ -136,6 +136,22 @@ final class UserController extends AbstractController
         return $this->json(['message' => 'Usuario eliminado']);
     }
 
+    #[Route('/check-username', name: 'user_check_username', methods: ['POST'])]
+    public function checkUsername(Request $request, UserRepository $repo): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $exists = (bool) $repo->findOneBy(['username' => $data['username']]);
+        return $this->json(['exists' => $exists]);
+    }
+
+    #[Route('/check-email', name: 'user_check_email', methods: ['POST'])]
+    public function checkEmail(Request $request, UserRepository $repo): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $exists = (bool) $repo->findOneBy(['email' => $data['email']]);
+        return $this->json(['exists' => $exists]);
+    }
+
     #[Route('/bulk-upload', name: 'user_bulk_upload', methods: ['POST'])]
     public function bulkUpload(Request $request, EntityManagerInterface $em, UserRepository $repo): JsonResponse
     {
