@@ -16,6 +16,10 @@ class Categorias
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\ManyToOne(inversedBy: 'category')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Arbitros $category = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -29,6 +33,18 @@ class Categorias
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Arbitros
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Arbitros $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }
