@@ -6,34 +6,28 @@ use App\Repository\ArbitrosRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Categorias;
 
 #[ORM\Entity(repositoryClass: ArbitrosRepository::class)]
 class Arbitros
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $first_surname = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $second_surname = null;
 
-    /**
-     * @var Collection<int, Categorias>
-     */
-    #[ORM\OneToMany(targetEntity: Categorias::class, mappedBy: 'category')]
-    private Collection $category;
-
-    public function __construct()
-    {
-        $this->category = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(targetEntity: Categorias::class, inversedBy: 'arbitros')]
+    #[ORM\JoinColumn(name: 'categoria_id', nullable: false)]
+    private ?Categorias $categoria = null;
 
     public function getId(): ?int
     {
@@ -48,7 +42,6 @@ class Arbitros
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -60,7 +53,6 @@ class Arbitros
     public function setFirstSurname(string $first_surname): static
     {
         $this->first_surname = $first_surname;
-
         return $this;
     }
 
@@ -72,37 +64,17 @@ class Arbitros
     public function setSecondSurname(?string $second_surname): static
     {
         $this->second_surname = $second_surname;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Categorias>
-     */
-    public function getCategory(): Collection
+    public function getCategoria(): ?Categorias
     {
-        return $this->category;
+        return $this->categoria;
     }
 
-    public function addCategory(Categorias $category): static
+    public function setCategoria(Categorias $categoria): static
     {
-        if (!$this->category->contains($category)) {
-            $this->category->add($category);
-            $category->setCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCategory(Categorias $category): static
-    {
-        if ($this->category->removeElement($category)) {
-            // set the owning side to null (unless already changed)
-            if ($category->getCategory() === $this) {
-                $category->setCategory(null);
-            }
-        }
-
+        $this->categoria = $categoria;
         return $this;
     }
 }
