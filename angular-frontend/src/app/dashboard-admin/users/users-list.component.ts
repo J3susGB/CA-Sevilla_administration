@@ -1,21 +1,28 @@
 // src/app/dashboard-admin/users/users-list.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { CommonModule }      from '@angular/common';
+import { RouterModule }      from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 
+// Angular Material
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule }            from '@angular/material/button';
+import { MatIconModule }              from '@angular/material/icon';
+import { MatFormFieldModule }         from '@angular/material/form-field';
+import { MatInputModule }             from '@angular/material/input';
 
-import { UserService, User } from '../../services/user.service';
-import { AuthService } from '../../services/auth.service';
-import { UserModalComponent } from './user-modal/user-modal.component';
+// Dálogo de confirmación 
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogData
+} from '../../shared/components/confirm-dialog/confirm-dialog.component';
 
-import { ToastService, Toast } from '../../shared/services/toast.service';
+import { UserService, User }         from '../../services/user.service';
+import { AuthService }               from '../../services/auth.service';
+import { UserModalComponent }        from './user-modal/user-modal.component';
+
+import { ToastService, Toast }       from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-users-list',
@@ -24,11 +31,16 @@ import { ToastService, Toast } from '../../shared/services/toast.service';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
+
+    // módulos Angular Material
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+
+    // añade ConfirmDialogComponent 
+    ConfirmDialogComponent
   ],
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.css']
@@ -45,7 +57,7 @@ export class UsersListComponent implements OnInit {
     private dialog: MatDialog,
     private fb: FormBuilder,
     private toastService: ToastService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     if (!this.auth.getRoles().includes('ROLE_ADMIN')) {
@@ -60,8 +72,6 @@ export class UsersListComponent implements OnInit {
       usernameFilter: [''],
       roleFilter: ['']
     });
-
-    // debug: comprobar que subcribe
     this.filterForm.valueChanges.subscribe(vals => {
       console.log('◼️ valueChanges:', vals);
       this.applyFilter();
@@ -70,11 +80,11 @@ export class UsersListComponent implements OnInit {
     this.load();
   }
 
-  dismissToast(id: number) {
+  dismissToast(id: number): void {
     this.toastService.removeToast(id);
   }
 
-  load(): void {
+  private load(): void {
     this.userService.getAll().subscribe(list => {
       this.users = list;
       this.filteredUsers = [...list];
@@ -82,18 +92,14 @@ export class UsersListComponent implements OnInit {
     });
   }
 
-  applyFilter(): void {
+  private applyFilter(): void {
     const { usernameFilter, roleFilter } = this.filterForm.value;
-    console.log('🔍 Filters changed:', { usernameFilter, roleFilter });
-
     const uf = usernameFilter.trim().toLowerCase();
     const rf = roleFilter.trim().toLowerCase();
 
     this.filteredUsers = this.users.filter(u => {
-      const matchesUser = !uf
-        || u.username.toLowerCase().includes(uf);
-      const matchesRole = !rf
-        || u.roles.some(r => r.toLowerCase().includes(rf));
+      const matchesUser = !uf || u.username.toLowerCase().includes(uf);
+      const matchesRole = !rf || u.roles.some(r => r.toLowerCase().includes(rf));
       return matchesUser && matchesRole;
     });
   }
@@ -114,11 +120,12 @@ export class UsersListComponent implements OnInit {
   }
 
   editUser(u: User): void {
-    this.dialog.open(UserModalComponent, {
-      width: '500px',
-      data: { user: u },
-      panelClass: 'user-modal-dialog'
-    })
+    this.dialog
+      .open(UserModalComponent, {
+        width: '500px',
+        data: { user: u },
+        panelClass: 'user-modal-dialog'
+      })
       .afterClosed()
       .subscribe(done => {
         if (done) {
@@ -128,22 +135,38 @@ export class UsersListComponent implements OnInit {
       });
   }
 
-
   deleteUser(u: User): void {
-    if (!confirm(`¿Eliminar usuario ${u.username}?`)) {
-      return;
-    }
+    // 1) Datos para el diálogo
+    const data: ConfirmDialogData = {
+      title: `Eliminar a ${u.username}?`,
+      message: '¡Esta acción no se puede deshacer!',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar'
+    };
 
-    this.userService.delete(u.id!).subscribe({
-      next: () => {
-        this.load();
-        this.toastService.show('Usuario eliminado con éxito 🗑️', 'error');
-      },
-      error: err => {
-        console.error(err);
-        this.toastService.show('Error al eliminar usuario ❌', 'error');
-      }
-    });
+    // 2) Abrimos confirm dialog
+    this.dialog
+      .open(ConfirmDialogComponent, { 
+        data,
+        panelClass: 'confirm-dialog-panel',
+        backdropClass: 'confirm-dialog-backdrop'
+       })
+      .afterClosed()
+      .subscribe(confirmed => {
+        if (!confirmed) {
+          return; // usuario canceló
+        }
+        // 3) Borramos y mostramos toast
+        this.userService.delete(u.id!).subscribe({
+          next: () => {
+            this.load();
+            this.toastService.show('Usuario eliminado con éxito 🗑️', 'error');
+          },
+          error: err => {
+            console.error(err);
+            this.toastService.show('Error al eliminar usuario ❌', 'error');
+          }
+        });
+      });
   }
-
 }

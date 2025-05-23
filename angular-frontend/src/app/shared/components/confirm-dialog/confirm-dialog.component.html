@@ -1,0 +1,32 @@
+<!-- src/app/shared/components/confirm-dialog/confirm-dialog.component.html -->
+<h2
+  mat-dialog-title
+  class="text-xl font-semibold text-[#00695c] mb-2"
+>
+  {{ data.title }}
+</h2>
+
+<mat-dialog-content class="text-sm text-gray-700">
+  {{ data.message }}
+</mat-dialog-content>
+
+<mat-dialog-actions
+  align="end"
+  class="mt-4 space-x-2"
+>
+  <button
+    mat-button
+    (click)="onCancel()"
+    class="px-4 py-2 rounded text-red-600 hover:text-red-700"
+  >
+    {{ data.cancelText || 'Cancelar' }}
+  </button>
+  <button
+    mat-flat-button
+    color="warn"
+    (click)="onConfirm()"
+    class="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white"
+  >
+    {{ data.confirmText || 'Eliminar' }}
+  </button>
+</mat-dialog-actions>

@@ -3,13 +3,21 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 
+import { forkJoin } from 'rxjs';
+
+// Angular Material
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { forkJoin } from 'rxjs';
+// Diálogo de confirmación
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogData
+} from '../../shared/components/confirm-dialog/confirm-dialog.component';
+
 import { ArbitroService, Arbitro } from '../../services/arbitro.service';
 import { CategoriaService, Categoria } from '../../services/categoria.service';
 import { AuthService } from '../../services/auth.service';
@@ -28,7 +36,8 @@ import { ToastService, Toast } from '../../shared/services/toast.service';
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    ConfirmDialogComponent
   ],
   templateUrl: './arbitros-list.component.html',
   styleUrls: ['./arbitros-list.component.css']
@@ -153,16 +162,42 @@ export class ArbitrosListComponent implements OnInit {
 
 
   deleteArbitro(a: Arbitro): void {
-    if (!confirm(`¿Eliminar árbitro ${a.first_surname} ${a.name}?`)) {
-      return;
-    }
-    this.arbSvc.delete(a.id).subscribe(() => {
-      this.load();
-      this.toastService.show('Árbitro eliminado con éxito 🗑️', 'error');
-    }, error => {
-      // opcional: manejar error
-      this.toastService.show('Error al eliminar árbitro ❌', 'error');
-    });
+    // Construimos la parte de apellidos (uno o dos)
+    const surnames = [a.first_surname, a.second_surname]
+      .filter(part => !!part)      // elimina null, undefined o ''
+      .join(' ');                  // une con espacio: "García López" o "García"
+
+    // Luego añadimos la coma y el nombre
+    const title = `Eliminar a ${surnames}, ${a.name}?`;
+
+    const data: ConfirmDialogData = {
+      title,
+      message: '¡Esta acción no se puede deshacer!',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar'
+    };
+
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data,
+        panelClass: 'confirm-dialog-panel',
+        backdropClass: 'confirm-dialog-backdrop'
+      })
+      .afterClosed()
+      .subscribe(confirmed => {
+        if (!confirmed) return;
+
+        this.arbSvc.delete(a.id).subscribe({
+          next: () => {
+            this.load();
+            this.toastService.show('Árbitro eliminado con éxito 🗑️', 'success');
+          },
+          error: () => {
+            this.toastService.show('Error al eliminar árbitro ❌', 'error');
+          }
+        });
+      });
   }
+
 
 }
