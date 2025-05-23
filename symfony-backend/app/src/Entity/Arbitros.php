@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Categorias;
 
 #[ORM\Entity(repositoryClass: ArbitrosRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Arbitros
 {
     #[ORM\Id]
@@ -76,5 +77,20 @@ class Arbitros
     {
         $this->categoria = $categoria;
         return $this;
+    }
+
+    /**
+     * Doctrine lifecycle callback antes de persistir o actualizar
+     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function uppercaseFields(): void
+    {
+        // Usamos mb_strtoupper para soportar acentos
+        $this->name           = mb_strtoupper($this->name);
+        $this->first_surname   = mb_strtoupper($this->first_surname);
+        if ($this->second_surname !== null) {
+            $this->second_surname = mb_strtoupper($this->second_surname);
+        }
     }
 }

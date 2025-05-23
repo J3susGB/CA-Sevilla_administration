@@ -43,7 +43,7 @@ final class ArbitroController extends AbstractController
         }
 
         $page   = max(1, (int) $request->query->get('page', 1));
-        $limit  = max(1, min(100, (int) $request->query->get('limit', 25)));
+        $limit  = max(1, min(10000, (int) $request->query->get('limit', 25)));
         $offset = ($page - 1) * $limit;
 
         $arbitros = $this->repository->findBy([], null, $limit, $offset);
@@ -115,6 +115,12 @@ final class ArbitroController extends AbstractController
             ], 404);
         }
 
+        // Transformamos a mayúsculas nombre y apellidos
+        $nombre    = mb_strtoupper($data['name']);
+        $ape1      = mb_strtoupper($data['first_surname']);
+        $ape2Raw   = $data['second_surname'] ?? null;
+        $ape2      = $ape2Raw ? mb_strtoupper($ape2Raw) : null;
+
         $arbitro = new Arbitros();
         $arbitro->setName($data['name'])
             ->setFirstSurname($data['first_surname'])
@@ -154,11 +160,13 @@ final class ArbitroController extends AbstractController
 
         // Solo actualizo si vienen en el POST
         if (array_key_exists('name', $data) && $data['name'] !== $arbitro->getName()) {
-            $arbitro->setName($data['name']);
+            // Convertir a mayúsculas antes de guardar
+            $arbitro->setName(mb_strtoupper($data['name']));
         }
 
         if (array_key_exists('first_surname', $data) && $data['first_surname'] !== $arbitro->getFirstSurname()) {
-            $arbitro->setFirstSurname($data['first_surname']);
+            // Convertir a mayúsculas antes de guardar
+            $arbitro->setFirstSurname(mb_strtoupper($data['first_surname']));
         }
 
         // Para second_surname permito null explícito
@@ -166,7 +174,9 @@ final class ArbitroController extends AbstractController
             array_key_exists('second_surname', $data)
             && $data['second_surname'] !== $arbitro->getSecondSurname()
         ) {
-            $arbitro->setSecondSurname($data['second_surname']);
+            $sec = $data['second_surname'];
+            // Convertir a mayúsculas, o dejar null si viene vacío
+            $arbitro->setSecondSurname($sec !== null ? mb_strtoupper($sec) : null);
         }
 
         if (array_key_exists('categoria_id', $data)) {
@@ -196,6 +206,7 @@ final class ArbitroController extends AbstractController
             ]
         ]);
     }
+
 
 
     // ELIMINAR ÁRBITRO — ADMIN y CAPACITACION
