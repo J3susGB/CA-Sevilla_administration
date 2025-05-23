@@ -15,6 +15,8 @@ import { CategoriaService, Categoria } from '../../services/categoria.service';
 import { AuthService } from '../../services/auth.service';
 import { ArbitroModalComponent } from './arbitro-modal/arbitro-modal.component';
 
+import { ToastService, Toast } from '../../shared/services/toast.service';
+
 @Component({
   selector: 'app-arbitros-list',
   standalone: true,
@@ -36,13 +38,15 @@ export class ArbitrosListComponent implements OnInit {
   filteredArbitros: Arbitro[] = [];
   filterForm!: FormGroup;
   private readonly ALL_LIMIT = 1000;
+  toasts: Toast[] = [];
 
   constructor(
     private arbSvc: ArbitroService,
     private catSvc: CategoriaService,
     private auth: AuthService,
     private dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -50,6 +54,10 @@ export class ArbitrosListComponent implements OnInit {
     if (!this.auth.getRoles().some(r => ['ROLE_ADMIN', 'ROLE_CAPACITACION'].includes(r))) {
       return;
     }
+
+    this.toastService.toasts$.subscribe((toasts: Toast[]) => {
+      this.toasts = toasts;
+    });
 
     // Formulario reactivo de filtros
     this.filterForm = this.fb.group({
@@ -60,6 +68,10 @@ export class ArbitrosListComponent implements OnInit {
 
     // Carga inicial de datos + categorías
     this.load();
+  }
+
+  dismissToast(id: number) {
+    this.toastService.removeToast(id);
   }
 
   private load(): void {
@@ -108,24 +120,49 @@ export class ArbitrosListComponent implements OnInit {
   }
 
   addArbitro(): void {
-    this.dialog.open(ArbitroModalComponent, {
-      width: '500px',
-      panelClass: 'user-modal-dialog'
-    }).afterClosed().subscribe(created => {
-      if (created) this.load();
+    this.dialog
+      .open(ArbitroModalComponent, {
+        width: '500px',
+        panelClass: 'user-modal-dialog'
+      })
+      .afterClosed()
+      .subscribe(created => {
+        if (created) {
+          this.load();
+          this.toastService.show('Añadido con éxito ✅', 'success');
+        }
+      });
+  }
+
+
+  editArbitro(a: Arbitro): void {
+    this.dialog
+      .open(ArbitroModalComponent, {
+        width: '500px',
+        data: { arbitro: a },
+        panelClass: 'user-modal-dialog'
+      })
+      .afterClosed()
+      .subscribe(done => {
+        if (done) {
+          this.load();
+          this.toastService.show('Actualizado con éxito ✅', 'success');
+        }
+      });
+  }
+
+
+  deleteArbitro(a: Arbitro): void {
+    if (!confirm(`¿Eliminar árbitro ${a.first_surname} ${a.name}?`)) {
+      return;
+    }
+    this.arbSvc.delete(a.id).subscribe(() => {
+      this.load();
+      this.toastService.show('Árbitro eliminado con éxito 🗑️', 'error');
+    }, error => {
+      // opcional: manejar error
+      this.toastService.show('Error al eliminar árbitro ❌', 'error');
     });
   }
 
-  editArbitro(a: Arbitro): void {
-    this.dialog.open(ArbitroModalComponent, {
-      width: '500px',
-      data: { arbitro: a },
-      panelClass: 'user-modal-dialog'
-    }).afterClosed().subscribe(done => done && this.load());
-  }
-
-  deleteArbitro(a: Arbitro): void {
-    if (!confirm(`¿Eliminar árbitro ${a.first_surname} ${a.name}?`)) return;
-    this.arbSvc.delete(a.id).subscribe(() => this.load());
-  }
 }
