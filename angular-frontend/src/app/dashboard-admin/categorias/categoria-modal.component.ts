@@ -40,7 +40,7 @@ export class CategoriaModalComponent implements OnInit {
   constructor(
     private fb:        FormBuilder,
     private catSvc:    CategoriaService,
-    private dialogRef: MatDialogRef<CategoriaModalComponent>,
+    public dialogRef: MatDialogRef<CategoriaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { categoria?: Categoria }
   ) {}
 
