@@ -1,0 +1,65 @@
+<!-- src/app/dashboard-admin/categorias/categorias-list.component.html -->
+<div class="contenedor_xl min-h-full">
+  <!-- Botón Atrás -->
+  <div>
+    <button
+        (click)="goBack()"
+        class="cursor-pointer boton transition-all duration-300 ease-in-out">
+        Atrás
+    </button>
+    </div>
+
+  <!-- Título -->
+  <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+    Gestión de Categorías
+  </h2>
+
+  <!-- FILTROS -->
+  <div class="contenedor_md flex items-end gap-4 mb-4" [formGroup]="filterForm">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Filtrar nombre</mat-label>
+      <input matInput
+             placeholder="Ej: Provincial"
+             formControlName="nombreFilter" />
+    </mat-form-field>
+  </div>
+
+  <!-- Botón Añadir -->
+  <div class="contenedor_md flex justify-end gap-3 mb-2 text-letra hover:text-yellow-700 transition-colors duration-300 ease-in-out">
+    <button mat-flat-button
+            color="primary"
+            (click)="addCategoria()"
+            class="cursor-pointer">
+      <i class="fa-solid fa-plus"></i>
+      Añadir
+    </button>
+  </div>
+
+  <!-- TABLA -->
+  <table class="contenedor_md tabla-responsive w-full text-left
+                border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-350 mb-16">
+    <thead class="bg-bordes text-logo uppercase text-sm">
+      <tr>
+        <th class="px-4 py-3">Nombre</th>
+        <th class="px-4 py-3 text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of filteredCategorias" class="border-b">
+        <td data-label="Nombre" class="px-4 py-3">
+          {{ c.nombre }}
+        </td>
+        <td data-label="Acciones" class="px-4 py-3 text-center space-x-8">
+          <a (click)="editCategoria(c)"
+             class="text-yellow-600 hover:text-yellow-700 cursor-pointer transition-all duration-300 ease-in-out">
+            <i class="fas fa-edit"></i>
+          </a>
+          <a (click)="deleteCategoria(c)"
+             class="text-red-500 hover:text-red-700 cursor-pointer transition-all duration-300 ease-in-out">
+            <i class="fas fa-trash-alt"></i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

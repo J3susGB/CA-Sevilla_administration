@@ -11,15 +11,16 @@ import { ArbitrosListComponent }           from './dashboard-admin/arbitros/arbi
 import { DashboardCapacitacionComponent }  from './dashboard-capacitacion/dashboard-capacitacion.component';
 import { DashboardClasificacionComponent } from './dashboard-clasificacion/dashboard-clasificacion.component';
 import { DashboardInformacionComponent }   from './dashboard-informacion/dashboard-informacion.component';
+import { CategoriasListComponent } from './dashboard-admin/categorias/categorias-list.component';
 
 export const routes: Routes = [
-  // 1) Login público
+  // Login público
   { path: '', component: LoginComponent, pathMatch: 'full'  },
 
-  // 2) Unauthorized
+  // Unauthorized
   { path: 'unauthorized', component: UnauthorizedComponent },
 
-  // 3) Lista plana de Usuarios 
+  // Lista plana de Usuarios 
   {
     path: 'admin/users',
     component: UsersListComponent,
@@ -27,7 +28,7 @@ export const routes: Routes = [
     data: { roles: ['ROLE_ADMIN'] }
   },
 
-  // 4) Lista plana de Árbitros
+  // Lista plana de Árbitros
   {
     path: 'admin/arbitros',
     component: ArbitrosListComponent,
@@ -35,7 +36,15 @@ export const routes: Routes = [
     data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },
 
-  // 5) Dashboard principal de Admin (cuando la URL sea EXACTAMENTE "/admin")
+  // Lista plana de Categorias
+  {
+    path: 'admin/categorias',
+    component: CategoriasListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_ADMIN'] }
+  },
+
+  // Dashboard principal de Admin (cuando la URL sea EXACTAMENTE "/admin")
   {
     path: 'admin',
     component: DashboardAdminComponent,
@@ -44,7 +53,7 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // 6) Otros dashboards por rol
+  // Otros dashboards por rol
   {
     path: 'capacitacion',
     component: DashboardCapacitacionComponent,
@@ -64,6 +73,6 @@ export const routes: Routes = [
     data: { roles: ['ROLE_INFORMACION'] }
   },
 
-  // 7) Wildcard al final
+  // Wildcard al final
   { path: '**', redirectTo: '' }
 ];

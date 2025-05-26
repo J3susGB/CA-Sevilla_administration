@@ -10,8 +10,8 @@ body {
   min-height: 100vh;                       
   background: linear-gradient(
     to bottom right,
-    #DCDCDC,
-    #A9A9A9,
+    #f1f0f0,
+    #dfdcdc,
     #C0C0C0
   ) no-repeat center center fixed;  
 }

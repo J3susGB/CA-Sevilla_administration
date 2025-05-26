@@ -33,13 +33,18 @@ final class CategoriaController extends AbstractController
             return $this->forbidden();
         }
 
-        // Paginación por si hace falta usarla en un futuro
-        $page  = max(1, (int)$request->query->get('page', 1));
-        $limit = max(1, min(100, (int)$request->query->get('limit', 25)));
+        $page   = max(1, (int)$request->query->get('page', 1));
+        $limit  = max(1, min(100, (int)$request->query->get('limit', 25)));
         $offset = ($page - 1) * $limit;
 
-        $categorias = $this->repository->findBy([], null, $limit, $offset);
-        $total      = $this->repository->count([]);
+        // Orden alfabético ascendente por 'name'
+        $categorias = $this->repository->findBy(
+            [],                         // sin filtros
+            ['name' => 'ASC'],          // ordenar por nombre A→Z
+            $limit,
+            $offset
+        );
+        $total = $this->repository->count([]);
 
         $data = array_map(fn(Categorias $c) => [
             'id'     => $c->getId(),
@@ -88,8 +93,14 @@ final class CategoriaController extends AbstractController
             ], 400);
         }
 
+        // 1) Pasa todo a minúsculas
+        $normalized = mb_strtolower($data['nombre'], 'UTF-8');
+        // 2) Primera letra en mayúscula
+        $normalized = mb_strtoupper(mb_substr($normalized, 0, 1), 'UTF-8')
+                      . mb_substr($normalized, 1);
+
         $cat = new Categorias();
-        $cat->setName($data['nombre']);
+        $cat->setName($normalized);
         $this->em->persist($cat);
         $this->em->flush();
 
@@ -108,7 +119,12 @@ final class CategoriaController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         if (isset($data['nombre'])) {
-            $categoria->setName($data['nombre']);
+            // Normalizar de la misma forma
+            $normalized = mb_strtolower($data['nombre'], 'UTF-8');
+            $normalized = mb_strtoupper(mb_substr($normalized, 0, 1), 'UTF-8')
+                          . mb_substr($normalized, 1);
+
+            $categoria->setName($normalized);
         }
 
         $this->em->flush();
@@ -129,7 +145,6 @@ final class CategoriaController extends AbstractController
         $this->em->remove($categoria);
         $this->em->flush();
 
-        // Con 204 No Content no hay body; aquí devuelvo status + message
         return $this->json([
             'status' => 'success',
             'data'   => ['message' => 'Categoría eliminada']

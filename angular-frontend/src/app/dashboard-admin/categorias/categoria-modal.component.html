@@ -1,0 +1,23 @@
+<!-- src/app/dashboard-admin/categorias/categoria-modal.component.html -->
+<h2 mat-dialog-title>
+  {{ isEdit ? 'EDITAR CATEGORÍA' : 'NUEVA CATEGORÍA' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" />
+      <mat-error *ngIf="form.get('nombre')?.hasError('required')">
+        El nombre es obligatorio
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="onSubmit()">
+    {{ isEdit ? 'Guardar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

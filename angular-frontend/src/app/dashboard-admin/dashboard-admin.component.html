@@ -26,20 +26,20 @@
     </a>
 
     <!-- Enlaces internos -->
-    <a routerLink="/admin/arbitros"
+        <a routerLink="/admin/categorias"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
               rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
-      Árbitros
+      Categorías
     </a>
-    <a *ngIf="isAdmin()" routerLink="/admin/users"
+        <a *ngIf="isAdmin()" routerLink="/admin/users"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
               rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
       Usuarios
     </a>
-    <a routerLink="profesores"
+    <a routerLink="/admin/arbitros"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
               rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
-      Profesores
+      Árbitros
     </a>
     <a routerLink="bonificaciones"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
