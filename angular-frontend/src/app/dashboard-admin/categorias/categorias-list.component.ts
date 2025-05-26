@@ -9,11 +9,18 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import {
+    ConfirmDialogComponent,
+    ConfirmDialogData
+} from '../../shared/components/confirm-dialog/confirm-dialog.component';
+
 import { CategoriaService, Categoria } from '../../services/categoria.service';
 import { AuthService } from '../../services/auth.service';
 import { CategoriaModalComponent } from './categoria-modal.component';
 
 import { RouterModule, Router } from '@angular/router';
+
+import { ToastService, Toast } from '../../shared/services/toast.service';
 
 @Component({
     selector: 'app-categorias-list',
@@ -26,7 +33,8 @@ import { RouterModule, Router } from '@angular/router';
         MatInputModule,
         MatButtonModule,
         MatIconModule,
-        CategoriaModalComponent
+        CategoriaModalComponent,
+        ConfirmDialogComponent
     ],
     templateUrl: './categorias-list.component.html',
     styleUrls: ['./categorias-list.component.css']
@@ -35,17 +43,23 @@ export class CategoriasListComponent implements OnInit {
     categorias: Categoria[] = [];
     filteredCategorias: Categoria[] = [];
     filterForm!: FormGroup;
+    toasts: Toast[] = [];
 
     constructor(
         private catSvc: CategoriaService,
         private auth: AuthService,
         private dialog: MatDialog,
         private fb: FormBuilder,
-        private router: Router
+        private router: Router,
+        private toastService: ToastService
     ) { }
 
     ngOnInit(): void {
         if (!this.auth.getRoles().includes('ROLE_ADMIN')) return;
+
+        this.toastService.toasts$.subscribe((toasts: Toast[]) => {
+            this.toasts = toasts;
+        });
 
         this.filterForm = this.fb.group({ nombreFilter: [''] });
         this.filterForm.valueChanges.subscribe(() => this.applyFilter());
@@ -77,7 +91,14 @@ export class CategoriasListComponent implements OnInit {
         this.dialog.open(CategoriaModalComponent, {
             width: '400px',
             panelClass: 'user-modal-dialog'
-        }).afterClosed().subscribe(created => created && this.load());
+        })
+            .afterClosed()
+            .subscribe(created => {
+                if (created) {
+                    this.load();
+                    this.toastService.show('Añadida con éxito ✅ ', 'success');
+                }
+            });
     }
 
     editCategoria(c: Categoria): void {
@@ -85,13 +106,45 @@ export class CategoriasListComponent implements OnInit {
             width: '400px',
             data: { categoria: c },
             panelClass: 'user-modal-dialog'
-        }).afterClosed().subscribe(updated => updated && this.load());
+        })
+            .afterClosed()
+            .subscribe(updated => {
+                if (updated) {
+                    this.load();
+                    this.toastService.show('Actualizada con éxito ✅ ', 'success');
+                }
+            });
+
     }
 
     deleteCategoria(c: Categoria): void {
-        if (!confirm(`¿Eliminar categoría “${c.nombre}”?`)) return;
-        this.catSvc.delete(c.id).subscribe(() => this.load());
+        const data: ConfirmDialogData = {
+            title: `¿Eliminar ${c.nombre}?`,
+            message: '¡Esta acción no se puede deshacer!',
+            confirmText: 'Eliminar',
+            cancelText: 'Cancelar'
+        };
+
+        this.dialog.open(ConfirmDialogComponent, {
+            data,
+            panelClass: 'confirm-dialog-panel',   
+            backdropClass: 'confirm-dialog-backdrop' 
+        })
+            .afterClosed()
+            .subscribe(confirmed => {
+                if (!confirmed) return;
+                this.catSvc.delete(c.id!).subscribe({
+                    next: () => {
+                        this.load();
+                        this.toastService.show('Eliminada con éxito 🗑️', 'error');
+                    },
+                    error: () => {
+                        this.toastService.show('Error al eliminar categoría ❌', 'error');
+                    }
+                });
+            });
     }
+
 
     /** Navegar atrás al dashboard admin */
     goBack(): void {
