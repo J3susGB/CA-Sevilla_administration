@@ -48,6 +48,7 @@ export class ArbitrosListComponent implements OnInit {
   filterForm!: FormGroup;
   private readonly ALL_LIMIT = 1000;
   toasts: Toast[] = [];
+  backLink = '/';  // ruta por defecto
 
   constructor(
     private arbSvc: ArbitroService,
@@ -62,6 +63,14 @@ export class ArbitrosListComponent implements OnInit {
     // Solo ADMIN y CAPACITACION
     if (!this.auth.getRoles().some(r => ['ROLE_ADMIN', 'ROLE_CAPACITACION'].includes(r))) {
       return;
+    }
+
+    // Calcula la ruta “atrás” según rol
+    const roles = this.auth.getRoles();
+    if (roles.includes('ROLE_ADMIN')) {
+      this.backLink = '/admin';
+    } else if (roles.includes('ROLE_CAPACITACION')) {
+      this.backLink = '/capacitacion';
     }
 
     this.toastService.toasts$.subscribe((toasts: Toast[]) => {
@@ -90,7 +99,7 @@ export class ArbitrosListComponent implements OnInit {
     }).subscribe(({ cats, arb }) => {
       // 1) Mapeamos id→nombre de categoría
       const mapCat = cats.reduce<Record<number, string>>((acc, c) => {
-        acc[c.id] = c.nombre;   // o c.name si lo tienes así
+        acc[c.id] = c.nombre;   // 
         return acc;
       }, {});
 
@@ -190,7 +199,7 @@ export class ArbitrosListComponent implements OnInit {
         this.arbSvc.delete(a.id).subscribe({
           next: () => {
             this.load();
-            this.toastService.show('Árbitro eliminado con éxito 🗑️', 'success');
+            this.toastService.show('Árbitro eliminado con éxito 🗑️', 'error');
           },
           error: () => {
             this.toastService.show('Error al eliminar árbitro ❌', 'error');

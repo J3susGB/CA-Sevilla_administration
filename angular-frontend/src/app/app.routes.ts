@@ -12,6 +12,7 @@ import { DashboardCapacitacionComponent }  from './dashboard-capacitacion/dashbo
 import { DashboardClasificacionComponent } from './dashboard-clasificacion/dashboard-clasificacion.component';
 import { DashboardInformacionComponent }   from './dashboard-informacion/dashboard-informacion.component';
 import { CategoriasListComponent } from './dashboard-admin/categorias/categorias-list.component';
+import { bonificacionesListComponent } from './dashboard-admin/bonificaciones/bonificaciones-list.component';
 
 export const routes: Routes = [
   // Login público
@@ -28,7 +29,7 @@ export const routes: Routes = [
     data: { roles: ['ROLE_ADMIN'] }
   },
 
-  // Lista plana de Árbitros
+  // Árbitros
   {
     path: 'admin/arbitros',
     component: ArbitrosListComponent,
@@ -36,12 +37,20 @@ export const routes: Routes = [
     data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },
 
-  // Lista plana de Categorias
+  // Categorias
   {
     path: 'admin/categorias',
     component: CategoriasListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN'] }
+  },
+
+  // Bonificaciones
+  {
+    path: 'admin/bonificaciones',
+    component: bonificacionesListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },
 
   // Dashboard principal de Admin (cuando la URL sea EXACTAMENTE "/admin")
@@ -58,7 +67,7 @@ export const routes: Routes = [
     path: 'capacitacion',
     component: DashboardCapacitacionComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['ROLE_CAPACITACION'] }
+    data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },
   {
     path: 'clasificacion',

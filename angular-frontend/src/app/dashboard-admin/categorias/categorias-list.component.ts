@@ -55,7 +55,10 @@ export class CategoriasListComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        if (!this.auth.getRoles().includes('ROLE_ADMIN')) return;
+        // Solo ADMIN y CAPACITACION
+    if (!this.auth.getRoles().some(r => ['ROLE_ADMIN', 'ROLE_CAPACITACION'].includes(r))) {
+      return;
+    }
 
         this.toastService.toasts$.subscribe((toasts: Toast[]) => {
             this.toasts = toasts;

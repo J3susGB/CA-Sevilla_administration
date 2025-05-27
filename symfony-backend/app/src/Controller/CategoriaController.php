@@ -26,10 +26,15 @@ final class CategoriaController extends AbstractController
         ], 403);
     }
 
+    private function allowed(): bool
+    {
+        return $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_CAPACITACION');
+    }
+
     #[Route('', name: 'categoria_index', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (! $this->allowed()) {
             return $this->forbidden();
         }
 
@@ -65,7 +70,7 @@ final class CategoriaController extends AbstractController
     #[Route('/{id}', name: 'categoria_show', methods: ['GET'])]
     public function show(Categorias $categoria): JsonResponse
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (! $this->allowed()) {
             return $this->forbidden();
         }
 
@@ -81,7 +86,7 @@ final class CategoriaController extends AbstractController
     #[Route('', name: 'categoria_create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (! $this->allowed()) {
             return $this->forbidden();
         }
 
@@ -113,7 +118,7 @@ final class CategoriaController extends AbstractController
     #[Route('/{id}', name: 'categoria_update', methods: ['PUT'])]
     public function update(Categorias $categoria, Request $request): JsonResponse
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (! $this->allowed()) {
             return $this->forbidden();
         }
 
@@ -138,7 +143,7 @@ final class CategoriaController extends AbstractController
     #[Route('/{id}', name: 'categoria_delete', methods: ['DELETE'])]
     public function delete(Categorias $categoria): JsonResponse
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (! $this->allowed()) {
             return $this->forbidden();
         }
 
