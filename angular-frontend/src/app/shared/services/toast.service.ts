@@ -24,7 +24,7 @@ export class ToastService {
   show(
     message: string,
     type: Toast['type'] = 'info',
-    duration: number = 2000     // 2 segundos
+    duration: number = 2500     // 2.5 segundos
   ) {
     const id = ++this.lastId;
     const toast: Toast = { id, message, type, duration };
