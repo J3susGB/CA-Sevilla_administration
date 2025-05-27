@@ -57,6 +57,10 @@ export class ArbitroModalComponent implements OnInit {
 
     // Inicializar formulario
     this.arbitroForm = this.fb.group({
+      nif: [
+        this.data?.arbitro?.nif || '',
+        [ Validators.required, Validators.minLength(9), Validators.maxLength(10) ]
+      ],
       name: [
         this.data?.arbitro?.name || '',
         Validators.required

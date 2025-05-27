@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface Arbitro {
   id: number;
+  nif: string;
   name: string;
   first_surname: string;
   second_surname?: string;

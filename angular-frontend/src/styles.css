@@ -3,18 +3,22 @@
 @tailwind utilities;
 
 /* Reset básico */
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
-  min-height: 100vh;                       
+}
+
+body {
+  min-height: 100vh;     /* al menos el alto de la ventana */
   background: linear-gradient(
     to bottom right,
     #f1f0f0,
     #dfdcdc,
     #C0C0C0
-  ) no-repeat center center fixed;  
+  );
 }
+
+
 
 /* Utilidades personalizadas */
 @layer utilities {

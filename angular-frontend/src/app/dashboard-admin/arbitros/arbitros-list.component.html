@@ -41,6 +41,7 @@
                 border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-350 mb-16">
     <thead class="bg-bordes text-logo uppercase text-sm">
       <tr>
+        <th class="px-4 py-3">NIF</th>
         <th class="px-4 py-3">Árbitro/a</th>
         <th class="px-4 py-3">Categoría</th>
         <th class="px-4 py-3 text-center">Acciones</th>
@@ -48,6 +49,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let a of filteredArbitros" class="border-b">
+        <td data-label="NIF" class="px-4 py-3">{{ a.nif }}</td>
         <td data-label="Árbitro/a" class="px-4 py-3">
           {{ a.first_surname }} {{ a.second_surname }} {{ a.name }}
         </td>

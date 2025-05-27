@@ -51,6 +51,7 @@ final class ArbitroController extends AbstractController
 
         $data = array_map(fn(Arbitros $a) => [
             'id'             => $a->getId(),
+            'nif'            => $a->getNif(),
             'name'           => $a->getName(),
             'first_surname'  => $a->getFirstSurname(),
             'second_surname' => $a->getSecondSurname(),
@@ -76,6 +77,7 @@ final class ArbitroController extends AbstractController
             'status' => 'success',
             'data'   => [
                 'id'             => $arbitro->getId(),
+                'nif'            => $arbitro->getNif(),
                 'name'           => $arbitro->getName(),
                 'first_surname'  => $arbitro->getFirstSurname(),
                 'second_surname' => $arbitro->getSecondSurname(),
@@ -93,16 +95,19 @@ final class ArbitroController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
+
+        // Validar campos obligatorios
         if (
-            empty($data['name'])
-            || empty($data['first_surname'])
-            || empty($data['categoria_id'])
+            empty($data['nif']) ||
+            empty($data['name']) ||
+            empty($data['first_surname']) ||
+            empty($data['categoria_id'])
         ) {
             return $this->json([
                 'status' => 'error',
                 'error'  => [
                     'code'    => 400,
-                    'message' => 'Campos obligatorios: name, first_surname, categoria_id'
+                    'message' => 'Campos obligatorios: nif, name, first_surname, categoria_id'
                 ]
             ], 400);
         }
@@ -115,14 +120,9 @@ final class ArbitroController extends AbstractController
             ], 404);
         }
 
-        // Transformamos a mayúsculas nombre y apellidos
-        $nombre    = mb_strtoupper($data['name']);
-        $ape1      = mb_strtoupper($data['first_surname']);
-        $ape2Raw   = $data['second_surname'] ?? null;
-        $ape2      = $ape2Raw ? mb_strtoupper($ape2Raw) : null;
-
-        $arbitro = new Arbitros();
-        $arbitro->setName($data['name'])
+        $arbitro = (new Arbitros())
+            ->setNif($data['nif'])
+            ->setName($data['name'])
             ->setFirstSurname($data['first_surname'])
             ->setSecondSurname($data['second_surname'] ?? null)
             ->setCategoria($categoria);
@@ -134,6 +134,7 @@ final class ArbitroController extends AbstractController
             'status' => 'success',
             'data'   => [
                 'id'             => $arbitro->getId(),
+                'nif'            => $arbitro->getNif(),
                 'name'           => $arbitro->getName(),
                 'first_surname'  => $arbitro->getFirstSurname(),
                 'second_surname' => $arbitro->getSecondSurname(),
@@ -158,25 +159,26 @@ final class ArbitroController extends AbstractController
             ], 400);
         }
 
-        // Solo actualizo si vienen en el POST
+        if (array_key_exists('nif', $data) && $data['nif'] !== $arbitro->getNif()) {
+            $arbitro->setNif($data['nif']);
+        }
+
         if (array_key_exists('name', $data) && $data['name'] !== $arbitro->getName()) {
-            // Convertir a mayúsculas antes de guardar
-            $arbitro->setName(mb_strtoupper($data['name']));
+            $arbitro->setName($data['name']);
         }
 
-        if (array_key_exists('first_surname', $data) && $data['first_surname'] !== $arbitro->getFirstSurname()) {
-            // Convertir a mayúsculas antes de guardar
-            $arbitro->setFirstSurname(mb_strtoupper($data['first_surname']));
-        }
-
-        // Para second_surname permito null explícito
         if (
-            array_key_exists('second_surname', $data)
-            && $data['second_surname'] !== $arbitro->getSecondSurname()
+            array_key_exists('first_surname', $data) &&
+            $data['first_surname'] !== $arbitro->getFirstSurname()
         ) {
-            $sec = $data['second_surname'];
-            // Convertir a mayúsculas, o dejar null si viene vacío
-            $arbitro->setSecondSurname($sec !== null ? mb_strtoupper($sec) : null);
+            $arbitro->setFirstSurname($data['first_surname']);
+        }
+
+        if (
+            array_key_exists('second_surname', $data) &&
+            $data['second_surname'] !== $arbitro->getSecondSurname()
+        ) {
+            $arbitro->setSecondSurname($data['second_surname'] ?? null);
         }
 
         if (array_key_exists('categoria_id', $data)) {
@@ -187,7 +189,6 @@ final class ArbitroController extends AbstractController
                     'error'  => ['code' => 404, 'message' => 'Categoría no encontrada']
                 ], 404);
             }
-            // Solo reasigno si ha cambiado
             if ($cat->getId() !== $arbitro->getCategoria()->getId()) {
                 $arbitro->setCategoria($cat);
             }
@@ -199,6 +200,7 @@ final class ArbitroController extends AbstractController
             'status' => 'success',
             'data'   => [
                 'id'             => $arbitro->getId(),
+                'nif'            => $arbitro->getNif(),
                 'name'           => $arbitro->getName(),
                 'first_surname'  => $arbitro->getFirstSurname(),
                 'second_surname' => $arbitro->getSecondSurname(),
@@ -206,8 +208,6 @@ final class ArbitroController extends AbstractController
             ]
         ]);
     }
-
-
 
     // ELIMINAR ÁRBITRO — ADMIN y CAPACITACION
     #[Route('/{id}', name: 'arbitro_delete', methods: ['DELETE'])]
@@ -250,13 +250,15 @@ final class ArbitroController extends AbstractController
             // 1) Guardar temporalmente y leer el XLSX
             $tmpPath = sys_get_temp_dir() . '/' . uniqid('arb_bulk_') . '.' . $file->getClientOriginalExtension();
             $file->move(\dirname($tmpPath), \basename($tmpPath));
-            $sheet = IOFactory::load($tmpPath)->getActiveSheet();
-            $rows  = $sheet->toArray();
+            $sheet  = IOFactory::load($tmpPath)->getActiveSheet();
+            $rows   = $sheet->toArray();
             array_shift($rows); // eliminamos cabecera
 
             foreach ($rows as $i => $row) {
+                $rowNum = $i + 2; // para referencia en reportes
+
                 if (count($row) < 14) {
-                    $ignored[] = ['row' => $i + 1, 'reason' => 'Formato de fila inválido'];
+                    $ignored[] = ['row' => $rowNum, 'reason' => 'Formato de fila inválido'];
                     continue;
                 }
 
@@ -265,12 +267,11 @@ final class ArbitroController extends AbstractController
                 $givenName     = '';
                 $firstSurname  = '';
                 $secondSurname = null;
-
                 if (str_contains($raw, ',')) {
                     [$partA, $partB] = array_map('trim', explode(',', $raw, 2));
-                    $surnames        = preg_split('/\s+/', $partA, -1, PREG_SPLIT_NO_EMPTY);
-                    $firstSurname    = $surnames[0] ?? '';
-                    $secondSurname   = $surnames[1] ?? null;
+                    $names           = preg_split('/\s+/', $partA, -1, PREG_SPLIT_NO_EMPTY);
+                    $firstSurname    = $names[0] ?? '';
+                    $secondSurname   = $names[1] ?? null;
                     $givenName       = $partB;
                 } else {
                     $parts = preg_split('/\s+/', $raw, -1, PREG_SPLIT_NO_EMPTY);
@@ -285,44 +286,49 @@ final class ArbitroController extends AbstractController
                     }
                 }
 
-                // 3) Normalizar y buscar categoría (columna índice 13)
-                $catRaw   = trim((string)$row[13]);
-                $catName  = ucfirst(strtolower($catRaw));
-                $categoria = $this->categoriasRepository->findOneBy(['name' => $catName]);
+                // 2.b) Extraer NIF (columna índice 1)
+                $nifRaw = trim((string)$row[1]);
+                if ($nifRaw === '') {
+                    $ignored[] = ['row' => $rowNum, 'reason' => 'NIF vacío'];
+                    continue;
+                }
+                $nifNormalized = mb_strtoupper($nifRaw);
 
+                // 3) Normalizar y buscar categoría (columna índice 13)
+                $catRaw    = trim((string)$row[13]);
+                $catName   = ucfirst(strtolower($catRaw));
+                $categoria = $this->categoriasRepository->findOneBy(['name' => $catName]);
                 if (! $categoria) {
                     $ignored[] = [
-                        'row'    => $i + 1,
+                        'row'    => $rowNum,
+                        'nif'    => $nifRaw,
                         'reason' => "Categoría “{$catRaw}” no encontrada"
                     ];
                     continue;
                 }
 
-                // 4) Comprobar si ya existe este árbitro
-                $exists = $this->repository->findOneBy([
-                    'name'            => $givenName,
-                    'first_surname'   => $firstSurname,
-                    'second_surname'  => $secondSurname
-                ]);
-                if ($exists) {
+                // 4) Comprobar duplicado por NIF
+                if ($this->repository->findOneBy(['nif' => $nifNormalized])) {
                     $ignored[] = [
-                        'row'    => $i + 1,
-                        'name'   => $givenName,
+                        'row'    => $rowNum,
+                        'nif'    => $nifRaw,
                         'reason' => 'Ya existe'
                     ];
                     continue;
                 }
 
                 // 5) Crear y persistir nuevo árbitro
-                $arb = new Arbitros();
-                $arb->setName($givenName)
+                $arb = (new Arbitros())
+                    ->setNif($nifRaw)
+                    ->setName($givenName)
                     ->setFirstSurname($firstSurname)
                     ->setSecondSurname($secondSurname)
                     ->setCategoria($categoria);
 
                 $this->em->persist($arb);
                 $created[] = [
-                    'row'            => $i + 1,
+                    'row'            => $rowNum,
+                    'nif'            => $arb->getNif(),
                     'name'           => $givenName,
                     'first_surname'  => $firstSurname,
                     'second_surname' => $secondSurname,
@@ -352,7 +358,6 @@ final class ArbitroController extends AbstractController
                 ]
             ], 500);
         } finally {
-            // 7) Eliminar siempre el fichero temporal
             if ($tmpPath && file_exists($tmpPath)) {
                 @unlink($tmpPath);
             }

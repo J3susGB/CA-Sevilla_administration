@@ -10,6 +10,20 @@
     <!-- Pestaña Individual -->
     <mat-tab label="Individual">
       <form [formGroup]="arbitroForm" (ngSubmit)="onCreate()">
+        <!-- NIF -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>NIF</mat-label>
+          <input matInput formControlName="nif" />
+          <mat-error *ngIf="arbitroForm.get('nif')?.hasError('required')">
+            Obligatorio
+          </mat-error>
+          <mat-error *ngIf="arbitroForm.get('nif')?.hasError('minlength')">
+            Mínimo 9 caracteres
+          </mat-error>
+          <mat-error *ngIf="arbitroForm.get('nif')?.hasError('maxlength')">
+            Máximo 10 caracteres
+          </mat-error>
+        </mat-form-field>
         <!-- Nombre -->
         <mat-form-field appearance="fill" class="w-full mb-4">
           <mat-label>Nombre</mat-label>

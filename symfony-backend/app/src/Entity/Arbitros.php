@@ -30,6 +30,9 @@ class Arbitros
     #[ORM\JoinColumn(name: 'categoria_id', nullable: false)]
     private ?Categorias $categoria = null;
 
+    #[ORM\Column(type: 'string', length: 20, unique: true, nullable: true)]
+    private ?string $nif = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -79,6 +82,17 @@ class Arbitros
         return $this;
     }
 
+    public function getNif(): ?string
+    {
+        return $this->nif;
+    }
+
+    public function setNif(string $nif): static
+    {
+        $this->nif = mb_strtoupper($nif);
+        return $this;
+    }
+
     /**
      * Doctrine lifecycle callback antes de persistir o actualizar
      */
@@ -91,6 +105,10 @@ class Arbitros
         $this->first_surname   = mb_strtoupper($this->first_surname);
         if ($this->second_surname !== null) {
             $this->second_surname = mb_strtoupper($this->second_surname);
+        }
+
+        if ($this->nif !== null) {
+            $this->nif = mb_strtoupper($this->nif);
         }
     }
 }
