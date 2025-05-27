@@ -1,0 +1,9 @@
+/* src/app/dashboard-admin/bonificaciones/bonificacion-modal/bonificacion-modal.component.css */
+
+:host ::ng-deep .mat-error {
+  font-size: 0.75rem;
+  color: #dc2626;
+  padding: 0.25rem;
+  border: 1px solid #fecaca;
+  border-radius: 0.25rem;
+}

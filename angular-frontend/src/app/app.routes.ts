@@ -12,7 +12,7 @@ import { DashboardCapacitacionComponent }  from './dashboard-capacitacion/dashbo
 import { DashboardClasificacionComponent } from './dashboard-clasificacion/dashboard-clasificacion.component';
 import { DashboardInformacionComponent }   from './dashboard-informacion/dashboard-informacion.component';
 import { CategoriasListComponent } from './dashboard-admin/categorias/categorias-list.component';
-import { bonificacionesListComponent } from './dashboard-admin/bonificaciones/bonificaciones-list.component';
+import { BonificacionesListComponent } from './dashboard-admin/bonificaciones/bonificaciones-list.component';
 
 export const routes: Routes = [
   // Login público
@@ -48,7 +48,7 @@ export const routes: Routes = [
   // Bonificaciones
   {
     path: 'admin/bonificaciones',
-    component: bonificacionesListComponent,
+    component: BonificacionesListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },

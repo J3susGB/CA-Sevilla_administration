@@ -1,0 +1,73 @@
+<h2 mat-dialog-title
+    class="text-2xl font-bold text-center border-b border-gray-200 pt-4 pb-2">
+  {{ isEditMode ? 'EDITAR BONIFICACIÓN' : 'CREAR BONIFICACIÓN' }}
+</h2>
+
+<mat-dialog-content class="px-6 py-4">
+  <mat-tab-group class="mb-6">
+    <!-- Pestaña Individual -->
+    <mat-tab label="Individual">
+      <!-- Sólo renderiza el form cuando existe -->
+      <form *ngIf="form" [formGroup]="form" (ngSubmit)="onCreate()">
+        <!-- Nombre -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" />
+          <mat-error *ngIf="form.get('name')?.hasError('required')">
+            Obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Valor -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Valor</mat-label>
+          <input matInput formControlName="valor" type="number" step="0.01" />
+          <mat-error *ngIf="form.get('valor')?.hasError('required')">
+            Obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Categoría -->
+        <mat-form-field appearance="fill" class="w-full mb-44">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="categoria_id">
+            <mat-option *ngFor="let c of categorias" [value]="c.id">
+              {{ c.nombre }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('categoria_id')?.hasError('required')">
+            Obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Acciones Crear/Cancelar -->
+        <mat-dialog-actions class="px-6 pb-6 flex justify-end space-x-4">
+          <button mat-button type="button" (click)="cancel()"
+                  class="text-gray-600 cursor-pointer">
+            Cancelar
+          </button>
+          <button mat-flat-button color="primary" type="submit"
+                  class="bg-blue-600 text-white cursor-pointer"
+                  [disabled]="form.invalid">
+            {{ isEditMode ? 'Guardar' : 'Crear' }}
+          </button>
+        </mat-dialog-actions>
+      </form>
+    </mat-tab>
+
+    <!-- Pestaña Carga masiva -->
+    <mat-tab label="Carga masiva" *ngIf="!isEditMode">
+      <div class="flex flex-col items-center py-6 space-y-4">
+        <p class="text-center">Sube un fichero Excel (.xlsx)</p>
+        <input type="file" accept=".xls,.xlsx"
+               (change)="onFileSelected($event)"
+               class="cursor-pointer" />
+        <button mat-flat-button color="primary" type="button"
+                class="bg-yellow-600 text-white cursor-pointer"
+                (click)="onUpload()">
+          Subir
+        </button>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
