@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  <div class="contenedor_md flex justify-end mb-4">
+  <div class="contenedor_md flex justify-end gap-3 text-letra hover:text-yellow-700 transition-color duration-300 ease-in-out mb-4">
     <button mat-flat-button color="accent" (click)="openBulkOnly()">
       <i class="fa-solid fa-upload"></i> Carga masiva
     </button>
@@ -44,13 +44,13 @@
   <!-- VISTA POR SESIÓN -->
   <ng-container *ngIf="viewMode==='bySession'">
     <div *ngFor="let s of filteredSessions" class="mb-8 contenedor_md">
-      <div class="mb-2 flex justify-between items-center">
+      <div class="mb-2 flex justify-between items-center text-letra hover:text-yellow-700 transition-color duration-300 ease-in-out">
         <div class="flex items-center gap-2">
           <button mat-icon-button (click)="toggleSession(s.id)">
-            <i class="fa-solid"
+            <i class="fa-solid text-letra"
                [ngClass]="expandedSessions[s.id] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
           </button>
-          <h3 class="text-xl font-semibold">
+          <h3 class="text-xl font-semibold text-letra">
             {{ s.fecha }} — Test #{{ s.testNumber }} ({{ s.categoria }})
           </h3>
         </div>
@@ -98,10 +98,10 @@
     <div *ngFor="let c of filteredTotals" class="mb-8 contenedor_md">
       <div class="flex items-center gap-2 mb-2">
         <button mat-icon-button (click)="toggleCategory(c.categoria)">
-          <i class="fa-solid"
+          <i class="fa-solid text-letra"
              [ngClass]="expandedCategories[c.categoria] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
         </button>
-        <h3 class="text-xl font-semibold">{{ c.categoria }}</h3>
+        <h3 class="text-xl font-semibold text-letra">{{ c.categoria }}</h3>
       </div>
       <div *ngIf="expandedCategories[c.categoria]">
         <table class="w-full border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-100">
