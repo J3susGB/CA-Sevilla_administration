@@ -6,7 +6,7 @@
 <mat-dialog-content class="px-6 py-4">
   <mat-tab-group [selectedIndex]="isBulk ? 1 : 0" class="mb-6">
     
-    <!-- Pestaña Individual (siempre, salvo bulk-only) -->
+    <!-- Pestaña Individual (solo si no es bulk) -->
     <mat-tab label="Individual" *ngIf="!isBulk">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill" class="w-full mb-4">
@@ -17,9 +17,9 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-form-field appearance="fill" class="w-full mb-20">
           <mat-label>Tipo</mat-label>
-          <mat-select formControlName="tipo">
+          <mat-select formControlName="tipo" panelClass="above-dialog">
             <mat-option value="teorica">Teórica</mat-option>
             <mat-option value="practica">Práctica</mat-option>
           </mat-select>
@@ -28,9 +28,9 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-form-field appearance="fill" class="w-full mb-32">
           <mat-label>Categoría</mat-label>
-          <mat-select formControlName="categoria_id">
+          <mat-select formControlName="categoria_id" panelClass="above-dialog">
             <mat-option *ngFor="let c of categorias" [value]="c.id">
               {{ c.nombre }}
             </mat-option>
@@ -40,7 +40,7 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-form-field appearance="fill" class="w-full mb-10">
           <mat-label>NIF</mat-label>
           <input matInput formControlName="nif" />
           <mat-error *ngIf="form.get('nif')?.hasError('required')">
@@ -54,9 +54,9 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-form-field appearance="fill" class="w-full mb-12">
           <mat-label>Asiste</mat-label>
-          <mat-select formControlName="asiste">
+          <mat-select formControlName="asiste" panelClass="above-dialog">
             <mat-option [value]="true">Sí</mat-option>
             <mat-option [value]="false">No</mat-option>
           </mat-select>
@@ -67,7 +67,7 @@
       </form>
     </mat-tab>
 
-    <!-- Pestaña Carga masiva (solo cuando NO es edición) -->
+    <!-- Pestaña Carga masiva (solo si no es edición) -->
     <mat-tab label="Carga masiva" *ngIf="!isEdit">
       <div class="flex flex-col items-center py-6 space-y-4">
         <p class="text-center">Sube un fichero Excel (.xlsx)</p>
