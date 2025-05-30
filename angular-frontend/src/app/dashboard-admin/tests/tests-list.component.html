@@ -1,0 +1,128 @@
+<div class="contenedor_xl">
+  <div>
+    <a [routerLink]="backLink"
+       class="cursor-pointer boton transition-all duration-300 ease-in-out">
+      Atrás
+    </a>
+  </div>
+  <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+    Gestión de Tests
+  </h2>
+
+  <!-- FILTROS + TOGGLE -->
+  <div class="contenedor_md flex flex-col lg:flex-row gap-4 mb-4" [formGroup]="filterForm">
+    <div class="flex-1 order-2 lg:order-1 flex flex-col lg:flex-row gap-4">
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>Buscar árbitro</mat-label>
+        <input matInput placeholder="Nombre y apellidos" formControlName="nameFilter" />
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>Categoría</mat-label>
+        <input matInput placeholder="Ej: Provincial" formControlName="catFilter" />
+      </mat-form-field>
+    </div>
+    <div class="flex gap-2 order-1 lg:order-2 items-center">
+      <button mat-flat-button color="primary"
+              (click)="toggleView('bySession')"
+              [disabled]="viewMode==='bySession'">
+        Por Sesión
+      </button>
+      <button mat-flat-button color="primary"
+              (click)="toggleView('byCategory')"
+              [disabled]="viewMode==='byCategory'">
+        Por Categoría
+      </button>
+    </div>
+  </div>
+
+  <div class="contenedor_md flex justify-end mb-4">
+    <button mat-flat-button color="accent" (click)="openBulkOnly()">
+      <i class="fa-solid fa-upload"></i> Carga masiva
+    </button>
+  </div>
+
+  <!-- VISTA POR SESIÓN -->
+  <ng-container *ngIf="viewMode==='bySession'">
+    <div *ngFor="let s of filteredSessions" class="mb-8 contenedor_md">
+      <div class="mb-2 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <button mat-icon-button (click)="toggleSession(s.id)">
+            <i class="fa-solid"
+               [ngClass]="expandedSessions[s.id] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+          </button>
+          <h3 class="text-xl font-semibold">
+            {{ s.fecha }} — Test #{{ s.testNumber }} ({{ s.categoria }})
+          </h3>
+        </div>
+        <button mat-flat-button color="primary" (click)="addTest(s)">
+          <i class="fa-solid fa-plus"></i> Añadir
+        </button>
+      </div>
+
+      <div *ngIf="expandedSessions[s.id]">
+        <table class="w-full border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-100">
+          <thead class="bg-bordes text-white uppercase text-sm">
+            <tr>
+              <th class="px-4 py-3">NIF</th>
+              <th class="px-4 py-3">Árbitro</th>
+              <th class="px-4 py-3 text-center">Nota</th>
+              <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="bg-[#bfbfbf]">
+            <tr *ngFor="let n of s.notas" class="border-b">
+              <td class="px-4 py-3">{{ n.nif }}</td>
+              <td class="px-4 py-3">
+                {{ n.first_surname }} {{ n.second_surname }}, {{ n.name }}
+              </td>
+              <td class="px-4 py-3 text-center">
+                {{ n.nota !== null ? n.nota : 0 }}
+              </td>
+              <td class="px-4 py-3 text-center space-x-8">
+                <a (click)="editTest(s, n)" class="text-yellow-600 hover:text-yellow-700">
+                  <i class="fa-solid fa-edit"></i>
+                </a>
+                <a (click)="deleteTest(n.arbitro_id)" class="text-red-500 hover:text-red-700">
+                  <i class="fa-solid fa-trash-alt"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- VISTA POR CATEGORÍA -->
+  <ng-container *ngIf="viewMode==='byCategory'">
+    <div *ngFor="let c of filteredTotals" class="mb-8 contenedor_md">
+      <div class="flex items-center gap-2 mb-2">
+        <button mat-icon-button (click)="toggleCategory(c.categoria)">
+          <i class="fa-solid"
+             [ngClass]="expandedCategories[c.categoria] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        </button>
+        <h3 class="text-xl font-semibold">{{ c.categoria }}</h3>
+      </div>
+      <div *ngIf="expandedCategories[c.categoria]">
+        <table class="w-full border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-100">
+          <thead class="bg-bordes text-white uppercase text-sm">
+            <tr>
+              <th class="px-4 py-3">NIF</th>
+              <th class="px-4 py-3">Árbitro</th>
+              <th class="px-4 py-3 text-center">Total Aciertos</th>
+            </tr>
+          </thead>
+          <tbody class="bg-[#bfbfbf]">
+            <tr *ngFor="let n of c.arbitros" class="border-b">
+              <td class="px-4 py-3">{{ n.nif }}</td>
+              <td class="px-4 py-3">
+                {{ n.first_surname }} {{ n.second_surname }}, {{ n.name }}
+              </td>
+              <td class="px-4 py-3 text-center">{{ n.total_aciertos }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -96,6 +96,7 @@ final class TestController extends AbstractController
                 'fecha'      => $s->getFecha()->format('d-m-Y'),
                 'testNumber' => $s->getTestNumber(),
                 'categoria'  => $cat->getName(),
+                'categoria_id' => $cat->getId(),
                 'notas'      => $lista,
             ];
         }
@@ -157,6 +158,7 @@ final class TestController extends AbstractController
             'fecha'      => $session->getFecha()->format('d-m-Y'),
             'testNumber' => $session->getTestNumber(),
             'categoria'  => $cat->getName(),
+            'categoria_id' => $cat->getId(),
             'notas'      => $lista,
         ];
 
@@ -184,16 +186,17 @@ final class TestController extends AbstractController
             $lista    = [];
 
             foreach ($arbitros as $arb) {
-                // Suma todos los aciertos (nota) de este árbitro en esta categoría
-                $sum = $this->testRepo->createQueryBuilder('t')
+                // Creamos el QB
+                $qb = $this->testRepo->createQueryBuilder('t')
                     ->select('SUM(t.nota)')
                     ->where('t.arbitro = :arb')
                     ->andWhere('t.categoria = :cat')
-                    ->setParameters(['arb' => $arb, 'cat' => $cat])
-                    ->getQuery()
-                    ->getSingleScalarResult();
+                    ->setParameter('arb', $arb)
+                    ->setParameter('cat', $cat);
 
-                $totalAciertos = (int)$sum;
+                // Ejecutamos
+                $sum = $qb->getQuery()->getSingleScalarResult();
+                $totalAciertos = (int) $sum;
 
                 $lista[] = [
                     'arbitro_id'     => $arb->getId(),
@@ -220,10 +223,10 @@ final class TestController extends AbstractController
         ]);
     }
 
+        // ─────────────────────────────────────────────
+    // CREAR NOTA INDIVIDUAL O ACTUALIZAR SI YA EXISTE
     // ─────────────────────────────────────────────
-    // CREAR NOTA INDIVIDUAL
-    // ─────────────────────────────────────────────
-    #[Route('', name: 'test_create', methods: ['POST'])]
+    #[Route('', name:'test_create', methods:['POST'])]
     public function create(Request $request): JsonResponse
     {
         if (! $this->allowed()) {
@@ -232,77 +235,110 @@ final class TestController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
+        // Campos obligatorios
         if (
-            empty($data['fecha']) ||
-            ! isset($data['testNumber']) ||
-            empty($data['categoria_id']) ||
-            empty($data['nif']) ||
-            ! isset($data['nota'])
+            ! isset($data['nif'])
+            || ! array_key_exists('nota', $data)
+            || ! isset($data['categoria_id'])
+            // o bien me mandas sessionId, o bien fecha+testNumber!
+            || (! isset($data['sessionId']) && ( empty($data['fecha']) || ! isset($data['testNumber']) ))
         ) {
             return $this->json([
-                'status' => 'error',
-                'error'  => ['code' => 400, 'message' => 'Campos obligatorios: fecha, testNumber, categoria_id, nif, nota']
+                'status'=>'error',
+                'error'=>['code'=>400,'message'=>'Requiere nif, nota, categoria_id y (sessionId ó (fecha,testNumber))']
             ], 400);
         }
 
-        $f = \DateTimeImmutable::createFromFormat('d/m/Y', $data['fecha'])
-           ?: \DateTimeImmutable::createFromFormat('d/m/y', $data['fecha']);
-        if (! $f) {
-            return $this->json([
-                'status' => 'error',
-                'error'  => ['code' => 400, 'message' => 'Fecha inválida']
-            ], 400);
-        }
-
-        $testNumber = (int)$data['testNumber'];
-        $categoria  = $this->catRepo->find($data['categoria_id']);
+        // Buscamos o validamos la categoría
+        $categoria = $this->catRepo->find($data['categoria_id']);
         if (! $categoria) {
             return $this->json([
-                'status' => 'error',
-                'error'  => ['code' => 404, 'message' => 'Categoría no encontrada']
+                'status'=>'error',
+                'error'=>['code'=>404,'message'=>'Categoría no encontrada']
             ], 404);
         }
 
-        $session = $this->sessionRepo->findOneBy([
-            'fecha'      => $f,
-            'testNumber' => $testNumber,
-            'categoria'  => $categoria
-        ]) ?? (new TestSession())
-            ->setFecha($f)
-            ->setTestNumber($testNumber)
-            ->setCategoria($categoria);
-        $this->em->persist($session);
+        // **1) Opción A: me mandan sessionId -> la uso directamente**
+        if (! empty($data['sessionId'])) {
+            $session = $this->sessionRepo->find((int)$data['sessionId']);
+            if (! $session) {
+                return $this->json([
+                    'status'=>'error',
+                    'error'=>['code'=>404,'message'=>'Sesión no encontrada']
+                ], 404);
+            }
+        }
+        // **2) Opción B: me mandan fecha/testNumber -> la busco o creo**
+        else {
+            // parseamos fecha sólo si hace falta
+            $f = \DateTimeImmutable::createFromFormat('d/m/Y', $data['fecha'])
+               ?: \DateTimeImmutable::createFromFormat('d/m/y', $data['fecha']);
+            if (! $f) {
+                return $this->json([
+                    'status'=>'error',
+                    'error'=>['code'=>400,'message'=>'Fecha inválida']
+                ], 400);
+            }
 
+            $testNumber = (int)$data['testNumber'];
+            $session = $this->sessionRepo->findOneBy([
+                'fecha'      => $f,
+                'testNumber' => $testNumber,
+                'categoria'  => $categoria
+            ]) ?? (new TestSession())
+                ->setFecha($f)
+                ->setTestNumber($testNumber)
+                ->setCategoria($categoria);
+            $this->em->persist($session);
+        }
+
+        // Buscamos árbitro
         $nif = mb_strtoupper($data['nif']);
-        $arb = $this->arbRepo->findOneBy(['nif' => $nif]);
+        $arb = $this->arbRepo->findOneBy(['nif'=>$nif]);
         if (! $arb) {
             return $this->json([
-                'status' => 'error',
-                'error'  => ['code' => 404, 'message' => 'Árbitro no encontrado']
+                'status'=>'error',
+                'error'=>['code'=>404,'message'=>'Árbitro no encontrado']
             ], 404);
         }
 
         $nota = (float)$data['nota'];
-        $test = (new Test())
-            ->setSession($session)
-            ->setArbitro($arb)
-            ->setNota($nota)
-            ->setCategoria($categoria);
-        $this->em->persist($test);
+
+        // Vemos si ya existe test para esa sesión+árbitro
+        $test = $this->testRepo->findOneBy([
+            'session'=> $session,
+            'arbitro'=> $arb
+        ]);
+        $action = 'created';
+        if ($test) {
+            $test->setNota($nota)
+                 ->setCategoria($categoria);
+            $action = 'updated';
+        } else {
+            $test = (new Test())
+                ->setSession($session)
+                ->setArbitro($arb)
+                ->setNota($nota)
+                ->setCategoria($categoria);
+            $this->em->persist($test);
+        }
+
         $this->em->flush();
 
         return $this->json([
-            'status' => 'success',
-            'data'   => [
+            'status'=>'success',
+            'data'=>[
                 'id'         => $test->getId(),
-                'fecha'      => $f->format('d-m-Y'),
-                'testNumber' => $testNumber,
+                'sessionId'  => $session->getId(),
+                'fecha'      => $session->getFecha()->format('d-m-Y'),
+                'testNumber' => $session->getTestNumber(),
                 'categoria'  => $categoria->getName(),
                 'arbitro_id' => $arb->getId(),
                 'nif'        => $arb->getNif(),
-                'nota'       => $nota,
+                'nota'       => $test->getNota(),
+                'action'     => $action
             ]
-        ], 201);
+        ], $action==='created' ? 201 : 200);
     }
 
     // ─────────────────────────────────────────────

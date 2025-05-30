@@ -1,0 +1,59 @@
+<h2 mat-dialog-title class="text-2xl font-bold text-center border-b pb-2">
+  {{ isEdit ? 'EDITAR NOTA' : 'NUEVA NOTA' }}
+</h2>
+
+<mat-dialog-content class="px-6 py-4">
+  <mat-tab-group [selectedIndex]="isBulk ? 1 : 0" class="mb-6">
+    <mat-tab label="Individual" *ngIf="!isBulk">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Fecha (dd/mm/aaaa)</mat-label>
+          <input matInput formControlName="fecha" placeholder="30/05/2025" />
+          <mat-error *ngIf="form.get('fecha')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Test #</mat-label>
+          <input matInput formControlName="testNumber" type="number" />
+          <mat-error *ngIf="form.get('testNumber')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="categoria_id">
+            <mat-option *ngFor="let c of categories" [value]="c.id">{{ c.nombre }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('categoria_id')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>NIF</mat-label>
+          <input matInput formControlName="nif" />
+          <mat-error *ngIf="form.get('nif')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Puntuación (total aciertos)</mat-label>
+          <input matInput formControlName="nota" type="number" />
+          <mat-error *ngIf="form.get('nota')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Carga masiva" *ngIf="!isEdit">
+      <div class="flex flex-col items-center py-6 space-y-4">
+        <p>Sube un fichero Excel (.xlsx)</p>
+        <input type="file" accept=".xls,.xlsx" (change)="onFileSelected($event)" />
+        <button mat-flat-button color="primary" (click)="onUpload()">Subir</button>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-6 pb-6">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-flat-button color="primary"
+          (click)="onSubmit()" [disabled]="isBulk || form?.invalid">
+    {{ isEdit ? 'Guardar cambios' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

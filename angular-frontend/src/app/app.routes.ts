@@ -1,4 +1,3 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 import { LoginComponent }                  from './login/login.component';
@@ -11,58 +10,50 @@ import { ArbitrosListComponent }           from './dashboard-admin/arbitros/arbi
 import { DashboardCapacitacionComponent }  from './dashboard-capacitacion/dashboard-capacitacion.component';
 import { DashboardClasificacionComponent } from './dashboard-clasificacion/dashboard-clasificacion.component';
 import { DashboardInformacionComponent }   from './dashboard-informacion/dashboard-informacion.component';
-import { CategoriasListComponent } from './dashboard-admin/categorias/categorias-list.component';
-import { BonificacionesListComponent } from './dashboard-admin/bonificaciones/bonificaciones-list.component';
-import { SesionesListComponent } from './dashboard-admin/sesiones/sesiones-list.component';
+import { CategoriasListComponent }         from './dashboard-admin/categorias/categorias-list.component';
+import { BonificacionesListComponent }     from './dashboard-admin/bonificaciones/bonificaciones-list.component';
+import { SesionesListComponent }           from './dashboard-admin/sesiones/sesiones-list.component';
+import { TestsListComponent }              from './dashboard-admin/tests/tests-list.component';
 
 export const routes: Routes = [
-  // Login público
-  { path: '', component: LoginComponent, pathMatch: 'full'  },
-
-  // Unauthorized
+  { path: '', component: LoginComponent, pathMatch: 'full' },
   { path: 'unauthorized', component: UnauthorizedComponent },
-
-  // Lista plana de Usuarios 
   {
     path: 'admin/users',
     component: UsersListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN'] }
   },
-
-  // Árbitros
   {
     path: 'admin/arbitros',
     component: ArbitrosListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },
-
-  // Categorias
   {
     path: 'admin/categorias',
     component: CategoriasListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN'] }
   },
-
-  // Bonificaciones
   {
     path: 'admin/bonificaciones',
     component: BonificacionesListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },
-
-  // Asistencia a clases y prácticas
   {
     path: 'admin/asistencias',
     component: SesionesListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },
-
-  // Dashboard principal de Admin (cuando la URL sea EXACTAMENTE "/admin")
+  {
+    path: 'admin/tests',
+    component: TestsListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
+  },
   {
     path: 'admin',
     component: DashboardAdminComponent,
@@ -70,8 +61,6 @@ export const routes: Routes = [
     data: { roles: ['ROLE_ADMIN'] },
     pathMatch: 'full'
   },
-
-  // Otros dashboards por rol
   {
     path: 'capacitacion',
     component: DashboardCapacitacionComponent,
@@ -90,7 +79,5 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_INFORMACION'] }
   },
-
-  // Wildcard al final
   { path: '**', redirectTo: '' }
 ];
