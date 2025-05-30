@@ -56,21 +56,39 @@ final class AsistenciaController extends AbstractController
             $cat      = $s->getCategoria();
             $arbitros = $this->arbRepo->findBy(['categoria' => $cat]);
 
-            // Mapa de asistencias existentes
+            // Preparo un map de { arbitroId => AsistenciaEntity }
             $mapAsist = [];
-            foreach ($s->getAsistencias() as $asi) {
-                $mapAsist[$asi->getArbitro()->getId()] = $asi->isAsiste();
+            foreach ($s->getAsistencias() as $asiEntity) {
+                $mapAsist[$asiEntity->getArbitro()->getId()] = $asiEntity;
             }
 
-            // Construir lista completa de asistencias
             $lista = [];
             foreach ($arbitros as $arb) {
-                $lista[] = [
-                    'arbitro_id'   => $arb->getId(),
-                    'nif'          => $arb->getNif(),
-                    'asiste'       => $mapAsist[$arb->getId()] ?? false,
-                    'categoria_id' => $cat->getId(),
-                ];
+                if (isset($mapAsist[$arb->getId()])) {
+                    $asi = $mapAsist[$arb->getId()];
+                    $lista[] = [
+                        'id'            => $asi->getId(),
+                        'arbitro_id'    => $arb->getId(),
+                        'nif'           => $arb->getNif(),
+                        'asiste'        => $asi->isAsiste(),
+                        'categoria_id'  => $cat->getId(),
+                        'second_surname'=> $arb->getSecondSurname(),
+                        'first_surname' => $arb->getFirstSurname(),
+                        'name'          => $arb->getName(),
+                    ];
+                } else {
+                    // asistencia nueva (aún no existe en BD)
+                    $lista[] = [
+                        'id'            => null,
+                        'arbitro_id'    => $arb->getId(),
+                        'nif'           => $arb->getNif(),
+                        'asiste'        => false,
+                        'categoria_id'  => $cat->getId(),
+                        'second_surname'=> $arb->getSecondSurname(),
+                        'first_surname' => $arb->getFirstSurname(),
+                        'name'          => $arb->getName(),
+                    ];
+                }
             }
 
             $out[] = [
@@ -102,18 +120,36 @@ final class AsistenciaController extends AbstractController
         $arbitros = $this->arbRepo->findBy(['categoria' => $cat]);
 
         $mapAsist = [];
-        foreach ($sesion->getAsistencias() as $asi) {
-            $mapAsist[$asi->getArbitro()->getId()] = $asi->isAsiste();
+        foreach ($sesion->getAsistencias() as $asiEntity) {
+            $mapAsist[$asiEntity->getArbitro()->getId()] = $asiEntity;
         }
 
         $lista = [];
         foreach ($arbitros as $arb) {
-            $lista[] = [
-                'arbitro_id'   => $arb->getId(),
-                'nif'          => $arb->getNif(),
-                'asiste'       => $mapAsist[$arb->getId()] ?? false,
-                'categoria_id' => $cat->getId(),
-            ];
+            if (isset($mapAsist[$arb->getId()])) {
+                $asi = $mapAsist[$arb->getId()];
+                $lista[] = [
+                    'id'            => $asi->getId(),
+                    'arbitro_id'    => $arb->getId(),
+                    'nif'           => $arb->getNif(),
+                    'asiste'        => $asi->isAsiste(),
+                    'categoria_id'  => $cat->getId(),
+                    'second_surname'=> $arb->getSecondSurname(),
+                    'first_surname' => $arb->getFirstSurname(),
+                    'name'          => $arb->getName(),
+                ];
+            } else {
+                $lista[] = [
+                    'id'            => null,
+                    'arbitro_id'    => $arb->getId(),
+                    'nif'           => $arb->getNif(),
+                    'asiste'        => false,
+                    'categoria_id'  => $cat->getId(),
+                    'second_surname'=> $arb->getSecondSurname(),
+                    'first_surname' => $arb->getFirstSurname(),
+                    'name'          => $arb->getName(),
+                ];
+            }
         }
 
         $data = [
@@ -137,19 +173,16 @@ final class AsistenciaController extends AbstractController
     public function totals(): JsonResponse
     {
         if (! $this->allowed()) {
-        return $this->forbidden();
+            return $this->forbidden();
         }
 
         $out = [];
-        // 1) Carga todas las categorías
         $categorias = $this->catRepo->findAll();
 
         foreach ($categorias as $cat) {
-            // 2) Arroba todos los árbitros de esta categoría
             $arbitros = $this->arbRepo->findBy(['categoria' => $cat]);
-
-            // 3) Para cada árbitro, cuenta sus asistencias = true
             $lista = [];
+
             foreach ($arbitros as $arb) {
                 $count = $this->asistRepo->count([
                     'arbitro' => $arb,
@@ -166,12 +199,11 @@ final class AsistenciaController extends AbstractController
                 ];
             }
 
-            // 4) Solo incluimos categoría si tiene árbitros (o quítalo si quieres siempre mostrarla)
             if (count($lista) > 0) {
                 $out[] = [
-                    'categoria_id'   => $cat->getId(),
-                    'categoria'      => $cat->getName(),
-                    'arbitros'       => $lista,
+                    'categoria_id' => $cat->getId(),
+                    'categoria'    => $cat->getName(),
+                    'arbitros'     => $lista,
                 ];
             }
         }
@@ -193,7 +225,7 @@ final class AsistenciaController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        // Validar
+
         if (
             empty($data['fecha']) ||
             empty($data['tipo']) ||
@@ -207,7 +239,6 @@ final class AsistenciaController extends AbstractController
             ], 400);
         }
 
-        // Parsear fecha
         $f = \DateTimeImmutable::createFromFormat('d/m/Y', $data['fecha'])
            ?: \DateTimeImmutable::createFromFormat('d/m/y', $data['fecha']);
         if (! $f) {
@@ -217,7 +248,7 @@ final class AsistenciaController extends AbstractController
             ], 400);
         }
 
-        $tipo = mb_strtolower($data['tipo']);
+        $tipo      = mb_strtolower($data['tipo']);
         $categoria = $this->catRepo->find($data['categoria_id']);
         if (! $categoria) {
             return $this->json([
@@ -226,7 +257,6 @@ final class AsistenciaController extends AbstractController
             ], 404);
         }
 
-        // Obtener o crear sesión
         $sesion = $this->sesionRepo->findOneBy([
             'fecha'     => $f,
             'tipo'      => $tipo,
@@ -237,7 +267,6 @@ final class AsistenciaController extends AbstractController
             ->setCategoria($categoria);
         $this->em->persist($sesion);
 
-        // Buscar árbitro
         $nif = mb_strtoupper($data['nif']);
         $arb = $this->arbRepo->findOneBy(['nif' => $nif]);
         if (! $arb) {
@@ -247,12 +276,10 @@ final class AsistenciaController extends AbstractController
             ], 404);
         }
 
-        // Crear asistencia
-        $asiste = (bool)$data['asiste'];
         $asi = (new Asistencia())
             ->setSesion($sesion)
             ->setArbitro($arb)
-            ->setAsiste($asiste)
+            ->setAsiste((bool)$data['asiste'])
             ->setCategoria($categoria);
         $this->em->persist($asi);
         $this->em->flush();
@@ -260,13 +287,13 @@ final class AsistenciaController extends AbstractController
         return $this->json([
             'status' => 'success',
             'data'   => [
-                'id'       => $asi->getId(),
-                'fecha'    => $f->format('d-m-Y'),
-                'tipo'     => $tipo,
-                'categoria'=> $categoria->getName(),
-                'arbitro_id'=> $arb->getId(),
-                'nif'      => $arb->getNif(),
-                'asiste'   => $asi->isAsiste(),
+                'id'         => $asi->getId(),
+                'fecha'      => $f->format('d-m-Y'),
+                'tipo'       => $tipo,
+                'categoria'  => $categoria->getName(),
+                'arbitro_id' => $arb->getId(),
+                'nif'        => $arb->getNif(),
+                'asiste'     => $asi->isAsiste(),
             ]
         ], 201);
     }
@@ -343,7 +370,7 @@ final class AsistenciaController extends AbstractController
 
         $sheet = IOFactory::load($tmpPath)->getActiveSheet();
         $rows  = $sheet->toArray();
-        array_shift($rows); // eliminar cabecera
+        array_shift($rows);
 
         $created    = [];
         $updated    = [];
@@ -358,18 +385,15 @@ final class AsistenciaController extends AbstractController
                 continue;
             }
 
-            // 1) Fecha + Tipo
             $fechaRaw = trim((string)$row[0]);
             $tipoRaw  = mb_strtolower(trim((string)$row[1]));
-
-            $fecha = \DateTimeImmutable::createFromFormat('d/m/Y', $fechaRaw)
-                  ?: \DateTimeImmutable::createFromFormat('d/m/y', $fechaRaw);
+            $fecha    = \DateTimeImmutable::createFromFormat('d/m/Y', $fechaRaw)
+                      ?: \DateTimeImmutable::createFromFormat('d/m/y', $fechaRaw);
             if (! $fecha) {
                 $ignored[] = ['row' => $rowNum, 'reason' => "Fecha inválida: {$fechaRaw}"];
                 continue;
             }
 
-            // 2) Categoría de la sesión
             $catRaw    = ucfirst(mb_strtolower(trim((string)$row[4])));
             $categoria = $this->catRepo->findOneBy(['name' => $catRaw]);
             if (! $categoria) {
@@ -377,7 +401,6 @@ final class AsistenciaController extends AbstractController
                 continue;
             }
 
-            // 3) Reusar o crear sesión
             $key = $fecha->format('Y-m-d').'|'.$tipoRaw.'|'.$categoria->getId();
             if ($key !== $currentKey) {
                 $currentKey = $key;
@@ -392,7 +415,6 @@ final class AsistenciaController extends AbstractController
                 $this->em->persist($sesion);
             }
 
-            // 4) NIF → Árbitro
             $nif = mb_strtoupper(trim((string)$row[2]));
             $arb = $this->arbRepo->findOneBy(['nif' => $nif]);
             if (! $arb) {
@@ -400,11 +422,9 @@ final class AsistenciaController extends AbstractController
                 continue;
             }
 
-            // 5) Asiste?
             $asisteRaw = mb_strtolower(trim((string)$row[3]));
             $asiste    = in_array($asisteRaw, ['1','si','sí','true'], true);
 
-            // 6) Crear/actualizar Asistencia
             $asi = $this->asistRepo->findOneBy([
                 'sesion'  => $sesion,
                 'arbitro' => $arb,
@@ -451,18 +471,14 @@ final class AsistenciaController extends AbstractController
         $conn     = $this->em->getConnection();
         $platform = $conn->getDatabasePlatform();
 
-        // Truncate asistencia primero (y reinicia PKs, cascada por FK)
-        $sqlAsist = $platform->getTruncateTableSQL('asistencia', true);
-        $conn->executeStatement($sqlAsist);
-
-        // Luego truncate clase_sesion (y reinicia PKs)
-        $sqlSesion = $platform->getTruncateTableSQL('clase_sesion', true);
-        $conn->executeStatement($sqlSesion);
+        // Truncate asistencia primero
+        $conn->executeStatement($platform->getTruncateTableSQL('asistencia', true));
+        // Luego truncate clase_sesion
+        $conn->executeStatement($platform->getTruncateTableSQL('clase_sesion', true));
 
         return $this->json([
             'status' => 'success',
             'data'   => ['message' => 'Tablas asistencia y clase_sesion reseteadas']
         ]);
     }
-
 }

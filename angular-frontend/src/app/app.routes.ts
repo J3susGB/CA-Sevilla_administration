@@ -13,6 +13,7 @@ import { DashboardClasificacionComponent } from './dashboard-clasificacion/dashb
 import { DashboardInformacionComponent }   from './dashboard-informacion/dashboard-informacion.component';
 import { CategoriasListComponent } from './dashboard-admin/categorias/categorias-list.component';
 import { BonificacionesListComponent } from './dashboard-admin/bonificaciones/bonificaciones-list.component';
+import { SesionesListComponent } from './dashboard-admin/sesiones/sesiones-list.component';
 
 export const routes: Routes = [
   // Login público
@@ -49,6 +50,14 @@ export const routes: Routes = [
   {
     path: 'admin/bonificaciones',
     component: BonificacionesListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
+  },
+
+  // Asistencia a clases y prácticas
+  {
+    path: 'admin/asistencias',
+    component: SesionesListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },
