@@ -1,0 +1,61 @@
+<div class="contenedor_xl min-h-full">
+  <div>
+    <a routerLink="/informacion"
+       class="cursor-pointer boton transition-all duration-300 ease-in-out">
+      Atrás
+    </a>
+  </div>
+  <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+    Gestión de Informes Arbitrales
+  </h2>
+
+  <!-- FILTROS -->
+  <div class="contenedor_md flex gap-4 mb-4" [formGroup]="filterForm">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Buscar árbitro</mat-label>
+      <input matInput formControlName="nameFilter" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-1/3">
+      <mat-label>Categoría</mat-label>
+      <input matInput formControlName="catFilter" />
+    </mat-form-field>
+  </div>
+
+  <!-- ACCIONES -->
+  <div class="contenedor_md flex justify-end gap-3 mb-2 text-letra hover:text-yellow-700">
+    <button mat-flat-button color="primary" (click)="addInforme()">
+      <i class="fa-solid fa-plus"></i> Añadir
+    </button>
+  </div>
+
+  <!-- TABLA -->
+  <table class="contenedor_md tabla-responsive w-full text-left rounded-xl bg-gray-350 shadow-lg mb-16">
+    <thead class="bg-bordes text-logo uppercase text-sm">
+      <tr>
+        <th class="px-4 py-3">NIF</th>
+        <th class="px-4 py-3">Árbitro/a</th>
+        <th class="px-4 py-3">Categoría</th>
+        <th class="px-4 py-3">Fecha</th>
+        <th class="px-4 py-3">Nota</th>
+        <th class="px-4 py-3 text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of filteredInformes" class="border-b">
+        <td class="px-4 py-3">{{ i.nif }}</td>
+        <td class="px-4 py-3">{{ i.first_surname }} {{ i.second_surname }} {{ i.name }}</td>
+        <td class="px-4 py-3">{{ i.categoria }}</td>
+        <td class="px-4 py-3">{{ i.fecha }}</td>
+        <td class="px-4 py-3">{{ i.nota }}</td>
+        <td class="px-4 py-3 text-center space-x-4">
+          <a (click)="editInforme(i)" class="text-yellow-600 hover:text-yellow-700 cursor-pointer">
+            <i class="fas fa-edit"></i>
+          </a>
+          <a (click)="deleteInforme(i)" class="text-red-500 hover:text-red-700 cursor-pointer">
+            <i class="fas fa-trash-alt"></i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

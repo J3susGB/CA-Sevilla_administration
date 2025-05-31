@@ -1,0 +1,71 @@
+<h2 mat-dialog-title
+    class="text-2xl font-bold text-center border-b border-gray-200 pt-4 pb-2">
+  {{ isEditMode ? 'EDITAR INFORME' : 'CREAR INFORME' }}
+</h2>
+
+<mat-dialog-content class="px-6 py-4">
+  <mat-tab-group class="mb-6">
+    <!-- INDIVIDUAL -->
+    <mat-tab label="Individual">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>NIF del árbitro</mat-label>
+          <input matInput formControlName="nif" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Nota</mat-label>
+          <input matInput type="number" step="0.1" formControlName="nota" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Fecha (dd/mm/yyyy)</mat-label>
+          <input matInput formControlName="fecha" placeholder="Ej: 12/04/2024" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-40">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="categoria_id">
+            <mat-option *ngFor="let c of categories" [value]="c.id">
+            {{ c.nombre }}
+            </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('categoria_id')?.hasError('required')">
+            Obligatorio
+        </mat-error>
+        </mat-form-field>
+
+        <mat-dialog-actions class="px-6 pb-6 flex justify-end space-x-4">
+          <button mat-button mat-dialog-close class="text-gray-600 cursor-pointer">
+            Cancelar
+          </button>
+          <button mat-flat-button
+                  color="primary"
+                  class="bg-blue-600 text-white cursor-pointer"
+                  type="submit"
+                  [disabled]="form.invalid">
+            {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+          </button>
+        </mat-dialog-actions>
+      </form>
+    </mat-tab>
+
+    <!-- CARGA MASIVA -->
+    <mat-tab label="Carga masiva" *ngIf="!isEditMode">
+      <div class="flex flex-col items-center py-6 space-y-4">
+        <p class="text-center">Sube un fichero Excel (.xlsx)</p>
+        <input type="file"
+               accept=".xls,.xlsx"
+               (change)="onFileSelected($event)"
+               class="cursor-pointer" />
+        <button mat-flat-button
+                color="primary"
+                type="button"
+                class="bg-yellow-600 text-white cursor-pointer"
+                (click)="onUpload()">
+          Subir
+        </button>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
