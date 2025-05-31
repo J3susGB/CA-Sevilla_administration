@@ -78,13 +78,13 @@ export const routes: Routes = [
     path: 'clasificacion',
     component: DashboardClasificacionComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['ROLE_CLASIFICACION'] }
+    data: { roles: ['ROLE_CLASIFICACION', 'ROLE_ADMIN'] }
   },
   {
     path: 'informacion',
     component: DashboardInformacionComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['ROLE_INFORMACION'] }
+    data: { roles: ['ROLE_INFORMACION', 'ROLE_ADMIN'] }
   },
   { path: '**', redirectTo: '' }
 ];

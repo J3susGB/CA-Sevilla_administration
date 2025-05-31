@@ -1,0 +1,50 @@
+<!-- src/app/dashboard-admin/dashboard-admin.component.html -->
+<div class="contenedor_xl">
+  <!-- BOTÓN ATRÁS sólo para ADMIN -->
+  <div *ngIf="roles.includes('ROLE_ADMIN')" class="mb-4">
+    <a
+      routerLink="/admin"
+      class="cursor-pointer boton transition-all duration-300 ease-in-out"
+    >
+      Atrás
+    </a>
+  </div>
+  
+  <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+    Panel de Información
+  </h2>
+
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 
+           w-full max-w-7xl mx-auto bg-letra p-10 rounded-2xl shadow-xl"
+  >
+    <!-- Enlaces externos -->
+    <a href="https://www.rfaf.es/pnfg/#google_vignette" target="_blank"
+       class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
+              rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
+      RFAF
+    </a>
+    <a href="https://intranet.rfaf.es/nfg/" target="_blank"
+       class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
+              rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
+      Intranet
+    </a>
+    <a href="https://gestion-imd.domcloud.dev/" target="_blank"
+       class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
+              rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
+      API
+    </a>
+
+    <!-- Enlaces internos -->
+    <a routerLink="/admin/informes"
+       class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
+              rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
+      Informes
+    </a>
+        <a routerLink="/admin/sanciones"
+       class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
+              rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
+      Sanciones
+    </a>
+  </div>
+</div>
