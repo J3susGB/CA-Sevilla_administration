@@ -14,6 +14,7 @@ import { CategoriasListComponent }         from './dashboard-admin/categorias/ca
 import { BonificacionesListComponent }     from './dashboard-admin/bonificaciones/bonificaciones-list.component';
 import { SesionesListComponent }           from './dashboard-admin/sesiones/sesiones-list.component';
 import { TestsListComponent }              from './dashboard-admin/tests/tests-list.component';
+import { TecnicosListComponent } from './dashboard-admin/tecnicos/tecnicos-list.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent, pathMatch: 'full' },
@@ -45,6 +46,12 @@ export const routes: Routes = [
   {
     path: 'admin/asistencias',
     component: SesionesListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
+  },
+  {
+    path: 'admin/tecnicos',
+    component: TecnicosListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN','ROLE_CAPACITACION'] }
   },

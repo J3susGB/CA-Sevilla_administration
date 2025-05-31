@@ -1,0 +1,76 @@
+<!-- src/app/dashboard-admin/tecnicos/tecnicos-modal/tecnicos-modal.component.html -->
+
+<h2 mat-dialog-title class="text-2xl font-bold text-center border-b pb-2">
+  {{ isEdit ? 'EDITAR NOTA TÉCNICA' : 'NUEVA NOTA TÉCNICA' }}
+</h2>
+
+<mat-dialog-content class="px-6 py-4">
+  <mat-tab-group [selectedIndex]="isBulk ? 1 : 0" class="mb-6">
+    <!-- ════════════════════════════════ -->
+    <!-- TAB “Individual” (Crear / Editar) -->
+    <!-- ════════════════════════════════ -->
+    <mat-tab label="Individual" *ngIf="!isBulk">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Fecha (dd-mm-aaaa)</mat-label>
+          <input matInput formControlName="fecha" placeholder="30-05-2025" />
+          <mat-error *ngIf="form.get('fecha')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Examen #</mat-label>
+          <input matInput formControlName="examNumber" type="number" />
+          <mat-error *ngIf="form.get('examNumber')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="categoria_id">
+            <mat-option *ngFor="let c of categories" [value]="c.id">{{ c.nombre }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('categoria_id')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>NIF</mat-label>
+          <input matInput formControlName="nif" />
+          <mat-error *ngIf="form.get('nif')?.hasError('required')">Obligatorio</mat-error>
+          <mat-error *ngIf="form.get('nif')?.hasError('minlength')">Mínimo 9 caracteres</mat-error>
+          <mat-error *ngIf="form.get('nif')?.hasError('maxlength')">Máximo 10 caracteres</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Nota</mat-label>
+          <input matInput formControlName="nota" type="number" />
+          <mat-error *ngIf="form.get('nota')?.hasError('required')">Obligatorio</mat-error>
+          <mat-error *ngIf="form.get('nota')?.hasError('min')">Mínimo 0</mat-error>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="repesca" class="mb-4">
+          Marcado si es REPESCA
+        </mat-checkbox>
+      </form>
+    </mat-tab>
+
+    <!-- ════════════════════════════════ -->
+    <!-- TAB “Carga masiva” -->
+    <!-- ════════════════════════════════ -->
+    <mat-tab label="Carga masiva" *ngIf="!isEdit">
+      <div class="flex flex-col items-center py-6 space-y-4">
+        <p>Sube un fichero Excel (.xlsx) con las columnas adecuadas</p>
+        <input type="file" accept=".xls,.xlsx" (change)="onFileSelected($event)" />
+        <button mat-flat-button color="primary" (click)="onUpload()">
+          Subir
+        </button>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-6 pb-6">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-flat-button color="primary"
+          (click)="onSubmit()" [disabled]="isBulk || form?.invalid">
+    {{ isEdit ? 'Guardar cambios' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

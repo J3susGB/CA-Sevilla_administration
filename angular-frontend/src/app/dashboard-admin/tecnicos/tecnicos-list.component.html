@@ -1,0 +1,157 @@
+<!-- src/app/dashboard-admin/tecnicos/tecnicos-list.component.html -->
+
+<div class="contenedor_xl">
+  <div>
+    <a routerLink="/capacitacion"
+       class="cursor-pointer boton transition-all duration-300 ease-in-out">
+      Atrás
+    </a>
+  </div>
+  <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+    Gestión de Notas Técnicas
+  </h2>
+
+  <!-- FILTROS + BOTONES PARA CAMBIAR VISTA ENTRE SESIÓN / CATEGORÍA -->
+  <div class="contenedor_md flex flex-col lg:flex-row gap-4 mb-4" [formGroup]="filterForm">
+    <div class="flex-1 order-2 lg:order-1 flex flex-col lg:flex-row gap-4">
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>Buscar árbitro</mat-label>
+        <input matInput placeholder="Nombre y apellidos" formControlName="nameFilter" />
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>Categoría</mat-label>
+        <input matInput placeholder="Ej: Provincial" formControlName="catFilter" />
+      </mat-form-field>
+    </div>
+    <div class="flex gap-2 order-1 lg:order-2 items-center">
+      <button mat-flat-button color="primary"
+              (click)="toggleView('bySession')"
+              [disabled]="viewMode==='bySession'">
+        Por Sesión
+      </button>
+      <button mat-flat-button color="primary"
+              (click)="toggleView('byCategory')"
+              [disabled]="viewMode==='byCategory'">
+        Por Categoría
+      </button>
+    </div>
+  </div>
+
+  <!-- BOTÓN “CARGA MASIVA” SIEMPRE VISIBLE -->
+  <div class="contenedor_md flex justify-end gap-3 text-letra hover:text-yellow-700 transition-color duration-300 ease-in-out mb-4">
+    <button mat-flat-button color="accent" (click)="openBulkOnly()">
+      <i class="fa-solid fa-upload"></i> Carga masiva
+    </button>
+  </div>
+
+  <!-- ── VISTA POR SESIÓN ─────────────────────────────────────────────────── -->
+  <ng-container *ngIf="viewMode==='bySession'">
+    <!-- Si no hay sesiones filtradas, mostramos mensaje “No hay registros” -->
+    <div *ngIf="filteredSessions.length === 0" class="contenedor_md text-center py-8">
+      <p class="text-letra text-lg mb-4">No hay registros de sesiones técnicas.</p>
+    </div>
+
+    <!-- Si hay sesiones, las listamos -->
+    <div *ngFor="let s of filteredSessions" class="mb-8 contenedor_md">
+      <div class="mb-2 flex justify-between items-center text-letra hover:text-yellow-700 transition-color duration-300 ease-in-out">
+        <div class="flex items-center gap-2">
+          <button mat-icon-button (click)="toggleSession(s.id)">
+            <i class="fa-solid text-letra"
+               [ngClass]="expandedSessions[s.id] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+          </button>
+          <h3 class="text-xl font-semibold text-letra">
+            {{ s.fecha }} — Examen #{{ s.examNumber }} ({{ s.categoria }})
+          </h3>
+        </div>
+        <button mat-flat-button color="primary"
+                (click)="addNota(s)">
+          <i class="fa-solid fa-plus"></i> Añadir
+        </button>
+      </div>
+
+      <div *ngIf="expandedSessions[s.id]">
+        <table class="w-full border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-100">
+          <thead class="bg-bordes text-white uppercase text-sm">
+            <tr>
+              <th class="px-4 py-3">NIF</th>
+              <th class="px-4 py-3">Árbitro</th>
+              <th class="px-4 py-3 text-center">Nota</th>
+              <th class="px-4 py-3 text-center">Repesca</th>
+              <th class="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="bg-[#bfbfbf]">
+            <tr *ngFor="let n of s.notas" class="border-b">
+              <td class="px-4 py-3">{{ n.nif }}</td>
+              <td class="px-4 py-3">
+                {{ n.first_surname }} {{ n.second_surname }}, {{ n.name }}
+              </td>
+              <td class="px-4 py-3 text-center">
+                {{ n.nota !== null ? n.nota : 0 }}
+              </td>
+              <td class="px-4 py-3 text-center">
+                {{ n.repesca ? 'X' : '' }}
+              </td>
+              <td class="px-4 py-3 text-center space-x-8">
+                <a (click)="editNota(s, n)" class="text-yellow-600 hover:text-yellow-700 cursor-pointer">
+                  <i class="fa-solid fa-edit"></i>
+                </a>
+                <a (click)="deleteNota(n.id)" class="text-red-500 hover:text-red-700 cursor-pointer">
+                  <i class="fa-solid fa-trash-alt"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ── VISTA POR CATEGORÍA ───────────────────────────────────────────────── -->
+  <ng-container *ngIf="viewMode==='byCategory'">
+    <!-- Si no hay categorías filtradas, mostramos mensaje “No hay registros” -->
+    <div *ngIf="filteredReport.length === 0" class="contenedor_md text-center py-8">
+      <p class="text-letra text-lg mb-4">No hay registros de notas por categoría.</p>
+    </div>
+
+    <!-- Si hay categorías, las listamos -->
+    <div *ngFor="let c of filteredReport" class="mb-8 contenedor_md">
+      <div class="flex items-center gap-2 mb-2">
+        <button mat-icon-button (click)="toggleCategory(c.categoria)">
+          <i class="fa-solid text-letra"
+             [ngClass]="expandedCategories[c.categoria] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        </button>
+        <h3 class="text-xl font-semibold text-letra">{{ c.categoria }}</h3>
+      </div>
+
+      <div *ngIf="expandedCategories[c.categoria]">
+        <!-- Por cada examen en esta categoría, mostramos su propia subtabla -->
+        <ng-container *ngFor="let examNum of getSortedExamNumbers(c.exams)">
+          <div class="mt-4 mb-2">
+            <h4 class="text-lg font-medium text-letra">
+              Examen #{{ examNum }}
+            </h4>
+          </div>
+          <table class="w-full border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-100 mb-6">
+            <thead class="bg-bordes text-white uppercase text-sm">
+              <tr>
+                <th class="px-4 py-3">Árbitro</th>
+                <th class="px-4 py-3 text-center">Nota</th>
+                <th class="px-4 py-3 text-center">Repesca</th>
+              </tr>
+            </thead>
+            <tbody class="bg-[#bfbfbf]">
+              <tr *ngFor="let n of sortArbitrosReport(c.exams[examNum])" class="border-b">
+                <td class="px-4 py-3">
+                  {{ n.first_surname }} {{ n.second_surname }}, {{ n.name }}
+                </td>
+                <td class="px-4 py-3 text-center">{{ n.nota }}</td>
+                <td class="px-4 py-3 text-center">{{ n.repesca ? 'X' : '' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>
