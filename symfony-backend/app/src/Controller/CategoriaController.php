@@ -28,7 +28,7 @@ final class CategoriaController extends AbstractController
 
     private function allowed(): bool
     {
-        return $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_CAPACITACION') || $this->isGranted('ROLE_INFORMACION');
+        return $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_CAPACITACION') || $this->isGranted('ROLE_INFORMACION') || $this->isGranted('ROLE_CLASIFICACION');
     }
 
     #[Route('', name: 'categoria_index', methods: ['GET'])]

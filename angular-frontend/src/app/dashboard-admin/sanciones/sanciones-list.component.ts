@@ -52,7 +52,7 @@ export class SancionesListComponent implements OnInit {
         const roles = this.auth.getRoles();
         if (!roles.some(r => ['ROLE_ADMIN', 'ROLE_CLASIFICACION', 'ROLE_INFORMACION'].includes(r))) return;
 
-        this.backLink = roles.includes('ROLE_ADMIN') ? '/informacion' :
+        this.backLink = roles.includes('ROLE_ADMIN') ? '/admin' :
             roles.includes('ROLE_CLASIFICACION') ? '/clasificacion' : '/informacion';
 
         this.toastService.toasts$.subscribe(t => this.toasts = t);

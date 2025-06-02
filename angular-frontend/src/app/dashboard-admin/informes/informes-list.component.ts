@@ -16,6 +16,7 @@ import { InformeService, Informe } from '../../services/informe.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastService, Toast } from '../../shared/services/toast.service';
 import { InformeModalComponent } from './informe-modal/informe-modal.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-informes-list',
@@ -39,15 +40,23 @@ export class InformesListComponent implements OnInit {
     filteredInformes: Informe[] = [];
     filterForm!: FormGroup;
     toasts: Toast[] = [];
+    backLink = '/';
 
     constructor(
         private infSvc: InformeService,
+        private auth: AuthService,
         private fb: FormBuilder,
         private dialog: MatDialog,
         private toastService: ToastService
     ) { }
 
     ngOnInit(): void {
+
+        const roles = this.auth.getRoles();
+        if (!roles.some(r => ['ROLE_ADMIN', 'ROLE_CLASIFICACION', 'ROLE_INFORMACION'].includes(r))) return;
+
+        this.backLink = roles.includes('ROLE_ADMIN') ? '/informacion' :
+            roles.includes('ROLE_CLASIFICACION') ? '/clasificacion' : '/informacion';
         this.toastService.toasts$.subscribe(toasts => this.toasts = toasts);
 
         this.filterForm = this.fb.group({
@@ -57,6 +66,7 @@ export class InformesListComponent implements OnInit {
 
         this.filterForm.valueChanges.subscribe(() => this.applyFilter());
         this.load();
+
     }
 
     private load(): void {

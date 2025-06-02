@@ -1,13 +1,22 @@
 <!-- src/app/dashboard-admin/dashboard-admin.component.html -->
 <div class="contenedor_xl">
+  <!-- BOTÓN ATRÁS sólo para ADMIN -->
+  <div *ngIf="roles.includes('ROLE_ADMIN')" class="mb-4">
+    <a
+      routerLink="/admin"
+      class="cursor-pointer boton transition-all duration-300 ease-in-out"
+    >
+      Atrás
+    </a>
+  </div>
+  
   <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
-    Delegado Provincial
+    Vocal de Clasificación
   </h2>
 
   <div
     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 
-           w-full max-w-7xl mx-auto bg-letra p-10 rounded-2xl shadow-xl"
-  >
+           w-full max-w-7xl mx-auto bg-letra p-10 rounded-2xl shadow-xl">
     <!-- Enlaces externos -->
     <a href="https://www.rfaf.es/pnfg/#google_vignette" target="_blank"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
@@ -26,30 +35,30 @@
     </a>
 
     <!-- Enlaces internos -->
-        <a routerLink="/admin/categorias"
+    <a routerLink="/admin/entrenamientos"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
               rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
-      Categorías
+      Entrenamientos
     </a>
-        <a *ngIf="isAdmin()" routerLink="/admin/users"
+    <a routerLink="/admin/fisicas"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
               rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
-      Usuarios
+      Pruebas físicas
     </a>
-    <a routerLink="/admin/arbitros"
+    <a routerLink="/admin/observaciones"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
               rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
-      Árbitros
+      Observaciones
     </a>
-    <a routerLink="/admin/bonificaciones"
-       class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
-              rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
-      Bonificaciones
-    </a>
-    <a routerLink="sanciones"
+    <a routerLink="/admin/sanciones"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
               rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
       Sanciones
+    </a>
+    <a routerLink="/admin/informes"
+       class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
+              rounded-lg p-6 text-lg uppercase transition-all hover:bg-bordes_hover hover:scale-105">
+      Informes
     </a>
     <a routerLink="reportes"
        class="cursor-pointer flex items-center justify-center bg-bordes text-logo font-semibold
@@ -69,7 +78,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          Vocalías
+          Clasificaciones
         </span>
         <svg [ngClass]="{
                 'rotate-180': vocaliasOpen,
@@ -91,20 +100,20 @@
         class="transition-all duration-500 ease-in-out origin-top-left lg:origin-top-none"
       >
         <div class="flex flex-col lg:flex-row gap-6 w-full lg:min-w-max bg-letra p-4 rounded-lg shadow-lg">
-          <a routerLink="/capacitacion"
+          <a routerLink="#"
              class="cursor-pointer flex items-center gap-2 text-logo bg-bordes rounded-lg p-4 text-base uppercase
                     transition-all hover:bg-bordes_hover hover:scale-105">
-            Capacitación
+            Provinciales
           </a>
-          <a routerLink="/informacion"
+          <a routerLink="#"
              class="cursor-pointer flex items-center gap-2 text-logo bg-bordes rounded-lg p-4 text-base uppercase
                     transition-all hover:bg-bordes_hover hover:scale-105">
-            Información
+            Oficiales
           </a>
-          <a routerLink="/clasificacion"
+          <a routerLink="#"
              class="cursor-pointer flex items-center gap-2 text-logo bg-bordes rounded-lg p-4 text-base uppercase
                     transition-all hover:bg-bordes_hover hover:scale-105">
-            Clasificación
+            Auxiliares
           </a>
         </div>
       </div>
