@@ -1,0 +1,69 @@
+<div class="contenedor_xl min-h-full">
+  <!-- ATRÁS + TÍTULO -->
+  <div>
+    <a [routerLink]="backLink"
+       class="cursor-pointer boton transition-all duration-300 ease-in-out">
+      Atrás
+    </a>
+  </div>
+  <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+    Gestión de Sanciones
+  </h2>
+
+  <!-- FILTROS -->
+  <div class="contenedor_md flex gap-4 mb-4" [formGroup]="filterForm">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Buscar árbitro</mat-label>
+      <input matInput placeholder="Nombre y apellidos" formControlName="nameFilter" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-1/3">
+      <mat-label>Categoría</mat-label>
+      <input matInput placeholder="Ej: Provincial" formControlName="catFilter" />
+    </mat-form-field>
+  </div>
+
+  <!-- BOTÓN AÑADIR -->
+  <div class="contenedor_md flex justify-end gap-3 mb-2 text-letra hover:text-yellow-700 transition-color duration-300 ease-in-out">
+    <button mat-flat-button color="primary" (click)="add()" class="cursor-pointer">
+      <i class="fa-solid fa-plus"></i>
+      Añadir
+    </button>
+  </div>
+
+  <!-- TABLA -->
+  <table class="contenedor_md tabla-responsive w-full text-left border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-350 mb-16">
+    <thead class="bg-bordes text-logo uppercase text-sm">
+      <tr>
+        <th class="px-4 py-3">NIF</th>
+        <th class="px-4 py-3">Árbitro/a</th>
+        <th class="px-4 py-3">Categoría</th>
+        <th class="px-4 py-3">Fecha</th>
+        <th class="px-4 py-3">Tipo</th>
+        <th class="px-4 py-3">Puntos</th>
+        <th class="px-4 py-3 text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of filtered" class="border-b">
+        <td data-label="NIF" class="px-4 py-3">{{ s.nif }}</td>
+        <td data-label="Árbitro/a" class="px-4 py-3">
+          {{ s.first_surname }} {{ s.second_surname }} {{ s.name }}
+        </td>
+        <td data-label="Categoría" class="px-4 py-3">{{ s.categoria }}</td>
+        <td data-label="Fecha" class="px-4 py-3">{{ s.fecha }}</td>
+        <td data-label="Tipo" class="px-4 py-3">{{ s.tipo }}</td>
+        <td data-label="Nota" class="px-4 py-3">{{ s.nota | number:'1.2-2' }}</td>
+        <td data-label="Acciones" class="px-4 py-3 text-center space-x-8">
+          <a (click)="edit(s)"
+             class="text-yellow-600 hover:text-yellow-700 cursor-pointer transition-all duration-300 ease-in-out">
+            <i class="fas fa-edit"></i>
+          </a>
+          <a (click)="delete(s)"
+             class="text-red-500 hover:text-red-700 cursor-pointer transition-all duration-300 ease-in-out">
+            <i class="fas fa-trash-alt"></i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

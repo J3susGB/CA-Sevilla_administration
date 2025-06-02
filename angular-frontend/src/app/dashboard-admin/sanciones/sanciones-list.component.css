@@ -1,0 +1,33 @@
+/* Estilos heredados de arbitros-list.component.css */
+/* Asegúrate de tener las clases como contenedor_xl, contenedor_md, boton, etc., definidas en global.css o styles.css */
+
+th, td {
+  text-align: left;
+}
+
+td[data-label]::before {
+  content: attr(data-label);
+  font-weight: bold;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead tr {
+    display: none;
+  }
+
+  td {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  td[data-label]::before {
+    display: inline-block;
+    width: 120px;
+  }
+}

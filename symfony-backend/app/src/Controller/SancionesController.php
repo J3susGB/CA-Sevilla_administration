@@ -88,6 +88,7 @@ class SancionesController extends AbstractController
                 'second_surname'=> $arb->getSecondSurname(),
                 'name'          => $arb->getName(),
                 'categoria'     => $cat->getName(),
+                'categoria_id'   => $cat->getId(),
                 'fecha'         => $sancion->getFecha()->format('d-m-Y'),
                 'tipo'          => $sancion->getTipo(),
                 'nota'          => $sancion->getNota(),

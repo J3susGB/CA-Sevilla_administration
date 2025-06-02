@@ -1,0 +1,9 @@
+/* Utiliza las clases y estilos heredados de arbitro-modal.component.css */
+
+mat-form-field {
+  width: 100%;
+}
+
+.mat-dialog-content {
+  overflow: hidden;
+}

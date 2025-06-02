@@ -1,0 +1,73 @@
+<h2 mat-dialog-title
+    class="text-2xl font-bold text-center border-b border-gray-200 pt-4 pb-2">
+  {{ isEditMode ? 'EDITAR SANCIÓN' : 'CREAR SANCIÓN' }}
+</h2>
+
+<mat-dialog-content class="px-6 py-4">
+  <mat-tab-group class="mb-6">
+    <!-- TAB INDIVIDUAL -->
+    <mat-tab label="Individual">
+      <form [formGroup]="sancionForm" (ngSubmit)="onCreate()">
+        <!-- NIF -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>NIF</mat-label>
+          <input matInput formControlName="nif" />
+          <mat-error *ngIf="sancionForm.get('nif')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <!-- Fecha -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Fecha</mat-label>
+          <input matInput formControlName="fecha" placeholder="dd/mm/yyyy o dd-mm-yyyy" />
+          <mat-error *ngIf="sancionForm.get('fecha')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <!-- Tipo -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Tipo de sanción</mat-label>
+          <input matInput formControlName="tipo" />
+          <mat-error *ngIf="sancionForm.get('tipo')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <!-- Nota -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Nota</mat-label>
+          <input matInput type="number" formControlName="nota" />
+          <mat-error *ngIf="sancionForm.get('nota')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <!-- Categoría -->
+        <mat-form-field appearance="fill" class="w-full mb-44">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="categoria_id">
+            <mat-option *ngFor="let c of categories" [value]="c.id">
+              {{ c.nombre }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="sancionForm.get('categoria_id')?.hasError('required')">Obligatorio</mat-error>
+        </mat-form-field>
+
+        <!-- BOTONES -->
+        <mat-dialog-actions class="px-6 pb-6 flex justify-end space-x-4">
+          <button mat-button mat-dialog-close class="text-gray-600 cursor-pointer">Cancelar</button>
+          <button mat-flat-button color="primary" class="bg-blue-600 text-white cursor-pointer" type="submit"
+                  [disabled]="sancionForm.invalid">
+            {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+          </button>
+        </mat-dialog-actions>
+      </form>
+    </mat-tab>
+
+    <!-- TAB CARGA MASIVA -->
+    <mat-tab label="Carga masiva" *ngIf="!isEditMode">
+      <div class="flex flex-col items-center py-6 space-y-4">
+        <p class="text-center">Sube un fichero Excel (.xlsx)</p>
+        <input type="file" accept=".xls,.xlsx" (change)="onFileSelected($event)" class="cursor-pointer" />
+        <button mat-flat-button color="primary" type="button"
+                class="bg-yellow-600 text-white cursor-pointer" (click)="onUpload()">
+          Subir
+        </button>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
