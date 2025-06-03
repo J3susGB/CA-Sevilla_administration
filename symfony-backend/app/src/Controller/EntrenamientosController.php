@@ -33,7 +33,7 @@ class EntrenamientosController extends AbstractController
 
     private function allowed(): bool
     {
-        return $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_INFORMACION') || $this->isGranted('ROLE_CLASIFICACION');
+        return $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_CLASIFICACION');
     }
 
     #[Route('', name: 'entrenamientos_create', methods: ['POST'])]

@@ -17,6 +17,7 @@ import { TestsListComponent } from './dashboard-admin/tests/tests-list.component
 import { TecnicosListComponent } from './dashboard-admin/tecnicos/tecnicos-list.component';
 import { InformesListComponent } from './dashboard-admin/informes/informes-list.component';
 import { SancionesListComponent } from './dashboard-admin/sanciones/sanciones-list.component';
+import { EntrenamientosListComponent } from './dashboard-admin/entrenamientos/entrenamientos-list.component';
 
 
 export const routes: Routes = [
@@ -77,6 +78,13 @@ export const routes: Routes = [
     component: SancionesListComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN', 'ROLE_CLASIFICACION', 'ROLE_INFORMACION'] }
+  },
+
+  {
+    path: 'admin/entrenamientos',
+    component: EntrenamientosListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_ADMIN', 'ROLE_CLASIFICACION'] }
   },
   {
     path: 'admin',
