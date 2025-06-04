@@ -1,0 +1,6 @@
+.user-modal-dialog .mat-dialog-container {
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  max-height: 95vh;
+}

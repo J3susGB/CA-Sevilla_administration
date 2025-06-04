@@ -18,7 +18,11 @@ body {
   );
 }
 
-
+main {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
 
 /* Utilidades personalizadas */
 @layer utilities {

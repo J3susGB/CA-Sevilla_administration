@@ -32,7 +32,7 @@ final class Version20250526181836 extends AbstractMigration
             VALUES (
               1,
               'admin',
-              '$2y$13$INp4OgXLo3W8ItsJjEK6DO0ozubXIzOinUrtI.igCoQ4K7vfBmm3e',
+              '$2y$13$m0hOGSL2iGnqo.1JFeyP.uks4F0TBRQn0VVspHbXDDe0xB20/wQSO',
               '["ROLE_ADMIN"]',
               'admin@correo.com'
             )

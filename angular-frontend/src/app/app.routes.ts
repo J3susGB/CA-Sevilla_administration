@@ -18,6 +18,7 @@ import { TecnicosListComponent } from './dashboard-admin/tecnicos/tecnicos-list.
 import { InformesListComponent } from './dashboard-admin/informes/informes-list.component';
 import { SancionesListComponent } from './dashboard-admin/sanciones/sanciones-list.component';
 import { EntrenamientosListComponent } from './dashboard-admin/entrenamientos/entrenamientos-list.component';
+import { SimulacrosListComponent } from './dashboard-admin/simulacros/simulacros-list.component';
 
 
 export const routes: Routes = [
@@ -79,12 +80,23 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ROLE_ADMIN', 'ROLE_CLASIFICACION', 'ROLE_INFORMACION'] }
   },
-
   {
     path: 'admin/entrenamientos',
     component: EntrenamientosListComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['ROLE_ADMIN', 'ROLE_CLASIFICACION'] }
+    data: { 
+      roles: ['ROLE_ADMIN', 'ROLE_CLASIFICACION'],
+      animation: 'Entrenamientos'
+    }
+  },
+  {
+    path: 'admin/simulacros',
+    component: SimulacrosListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { 
+      roles: ['ROLE_ADMIN', 'ROLE_CLASIFICACION'],
+      animation: 'Simulacros'
+    }
   },
   {
     path: 'admin',

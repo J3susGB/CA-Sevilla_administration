@@ -75,7 +75,7 @@ class SimulacrosController extends AbstractController
         $nif = mb_strtoupper($data['nif']);
         $arbitro = $this->arbRepo->findOneBy(['nif' => $nif]);
         $categoria = $this->catRepo->find($data['categoria_id']);
-        $fecha = \DateTime::createFromFormat('Y-m-d', $data['fecha']);
+        $fecha = \DateTime::createFromFormat('d-m-Y', $data['fecha']);
 
         if (!$arbitro || !$categoria || !$fecha) {
             return $this->json(['status' => 'error', 'error' => ['message' => 'Datos inválidos']], 400);
@@ -149,6 +149,7 @@ class SimulacrosController extends AbstractController
     public function bulkUpload(Request $request): JsonResponse
     {
         if (!$this->allowed()) return $this->forbidden();
+
         $file = $request->files->get('file');
         if (!$file) {
             return $this->json(['status' => 'error', 'error' => ['message' => 'Archivo no encontrado']], 400);
@@ -156,6 +157,9 @@ class SimulacrosController extends AbstractController
 
         $sheet = IOFactory::load($file->getPathname())->getActiveSheet();
         $rows = $sheet->toArray();
+
+        // Eliminar el archivo temporal
+        @unlink($file->getPathname());
 
         $headers = array_map(fn($h) => strtoupper(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', trim($h))), array_shift($rows));
         $normalize = fn(string $s) => trim(preg_replace('/\s+/u', ' ', strtoupper(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $s))));
@@ -171,15 +175,22 @@ class SimulacrosController extends AbstractController
         $created = [];
         $skipped = [];
 
+        // Recoger primera fecha válida de la carga
+        $fechaCarga = null;
+
         foreach ($rows as $i => $row) {
             $data = array_combine($headers, array_map('trim', $row));
             $nombre = $data['ARBITRO'] ?? null;
-            $fecha = \DateTime::createFromFormat('d/m/y', $data['FECHA'] ?? '') ?: \DateTime::createFromFormat('Y-m-d', $data['FECHA'] ?? '');
+            $fecha = \DateTime::createFromFormat('d/m/y', $data['FECHA'] ?? '') ?: \DateTime::createFromFormat('d-m-Y', $data['FECHA'] ?? '');
             $periodo = isset($data['PERIODO']) ? (float) $data['PERIODO'] : null;
 
             if (!$nombre || !$fecha || $periodo === null) {
                 $skipped[] = ['row' => $i + 2, 'reason' => 'Campos incompletos'];
                 continue;
+            }
+
+            if (!$fechaCarga) {
+                $fechaCarga = clone $fecha;
             }
 
             $key = $normalize($nombre);
@@ -196,23 +207,27 @@ class SimulacrosController extends AbstractController
             $sim->setArbitro($arb)->setCategoria($cat)->setFecha($fecha)->setPeriodo($periodo);
 
             $this->em->persist($sim);
-            $created[] = ['arbitro' => $nombre, 'fecha' => $fecha->format('Y-m-d'), 'periodo' => $periodo];
+            $created[] = ['arbitro' => $nombre, 'fecha' => $fecha->format('d-m-Y'), 'periodo' => $periodo];
         }
 
-        // Crear simulacros en blanco (0) para los no incluidos
-        $fechaActual = new \DateTime();
+        // Si no hubo ninguna fecha válida, usar hoy
+        if (!$fechaCarga) {
+            $fechaCarga = new \DateTime();
+        }
+
+        // Crear simulacros con 0 para los árbitros no incluidos
         foreach ($arbitros as $arb) {
             if (in_array($arb->getId(), $procesados)) continue;
             $categoria = $arb->getCategoria()?->getName();
             if (!in_array($categoria, ['Provincial', 'Oficial'])) continue;
 
             $sim = new Simulacros();
-            $sim->setArbitro($arb)->setCategoria($arb->getCategoria())->setFecha($fechaActual)->setPeriodo(0);
+            $sim->setArbitro($arb)->setCategoria($arb->getCategoria())->setFecha($fechaCarga)->setPeriodo(0);
             $this->em->persist($sim);
 
             $created[] = [
                 'arbitro' => $arb->getFirstSurname().' '.$arb->getSecondSurname().' '.$arb->getName(),
-                'fecha' => $fechaActual->format('Y-m-d'),
+                'fecha' => $fechaCarga->format('d-m-Y'),
                 'periodo' => 0,
             ];
         }

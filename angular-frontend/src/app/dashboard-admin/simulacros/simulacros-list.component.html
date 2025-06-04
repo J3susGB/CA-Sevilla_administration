@@ -1,0 +1,69 @@
+<div class="contenedor_xl min-h-full">
+
+  <!-- Botón atrás -->
+  <div>
+    <a routerLink="/clasificacion"
+       class="cursor-pointer boton transition-all duration-300 ease-in-out">
+      Atrás
+    </a>
+  </div>
+
+  <!-- Título -->
+  <h2 class="text-3xl font-bold text-center mb-8 mt-8 text-letra">
+    <a routerLink = '/admin/entrenamientos' class="opacity-50">Asistencia</a> | <span class="underline">Simulacros</span>
+  </h2>
+
+  <!-- FILTROS -->
+  <div class="contenedor_md flex gap-4 mb-4" [formGroup]="filterForm">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Buscar árbitro</mat-label>
+      <input matInput placeholder="Nombre y apellidos" formControlName="nameFilter" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="w-1/3">
+      <mat-label>Categoría</mat-label>
+      <input matInput placeholder="Ej: Oficial" formControlName="catFilter" />
+    </mat-form-field>
+  </div>
+
+  <!-- BOTÓN AÑADIR -->
+  <div class="contenedor_md flex justify-end gap-3 mb-2 text-letra hover:text-yellow-700 transition-color duration-300 ease-in-out">
+    <button mat-flat-button color="primary" (click)="addSimulacro()" class="cursor-pointer">
+      <i class="fa-solid fa-plus"></i>
+      Añadir
+    </button>
+  </div>
+
+  <!-- TABLA RESPONSIVE -->
+  <div class="contenedor_md overflow-x-auto">
+    <table class="tabla-responsive w-full text-left border-collapse rounded-xl overflow-hidden shadow-lg bg-gray-350 mb-16">
+      <thead class="bg-bordes text-logo uppercase text-sm">
+        <tr>
+          <th class="px-3 py-2">NIF</th>
+          <th class="px-3 py-2">Árbitro/a</th>
+          <th class="px-3 py-2">Categoría</th>
+          <th class="px-3 py-2">Fecha</th>
+          <th class="px-3 py-2">Periodo</th>
+          <th class="px-3 py-2 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of filteredSimulacros" class="border-b">
+          <td data-label="NIF" class="px-3 py-2">{{ s.nif }}</td>
+          <td data-label="Árbitro/a" class="px-3 py-2">{{ s.first_surname }} {{ s.second_surname }} {{ s.name }}</td>
+          <td data-label="Categoría" class="px-3 py-2">{{ s.categoria }}</td>
+          <td data-label="Fecha" class="px-3 py-2">{{ s.fecha }}</td>
+          <td data-label="Periodo" class="px-3 py-2">{{ s.periodo }}</td>
+          <td data-label="Acciones" class="px-3 py-2 text-center space-x-4">
+            <a (click)="editSimulacro(s)" class="text-yellow-600 hover:text-yellow-700 cursor-pointer">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a (click)="deleteSimulacro(s)" class="text-red-500 hover:text-red-700 cursor-pointer">
+              <i class="fas fa-trash-alt"></i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

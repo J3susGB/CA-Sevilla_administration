@@ -1,0 +1,85 @@
+<!-- src/app/dashboard-admin/simulacros/simulacros-modal/simulacros-modal.component.html -->
+
+<h2 mat-dialog-title class="text-2xl font-bold text-center border-b border-gray-200 pt-4 pb-2">
+  {{ isEditMode ? 'Editar Simulacro' : 'Añadir Simulacro' }}
+</h2>
+
+<mat-dialog-content class="px-6 py-4">
+  <mat-tab-group class="mb-6">
+
+    <!-- Pestaña Individual -->
+    <mat-tab label="Individual" *ngIf="!isEditMode">
+      <form [formGroup]="createForm" (ngSubmit)="onCreate()" class="flex flex-col gap-4 mt-4">
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>NIF</mat-label>
+          <input matInput formControlName="nif" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="categoria_id">
+            <mat-option *ngFor="let cat of categorias" [value]="cat.id">
+              {{ cat.nombre }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Fecha</mat-label>
+          <input matInput [matDatepicker]="picker1" formControlName="fecha" />
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Periodo</mat-label>
+          <input matInput type="number" formControlName="periodo" />
+        </mat-form-field>
+
+        <mat-dialog-actions class="px-6 pb-6 flex justify-end space-x-4">
+          <button mat-button mat-dialog-close>Cancelar</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="createForm.invalid">
+            Crear
+          </button>
+        </mat-dialog-actions>
+      </form>
+    </mat-tab>
+
+    <!-- Pestaña Editar -->
+    <mat-tab label="Editar" *ngIf="isEditMode">
+      <form [formGroup]="editForm" (ngSubmit)="onUpdate()" class="flex flex-col gap-4 mt-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Fecha</mat-label>
+          <input matInput [matDatepicker]="picker2" formControlName="fecha" />
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Periodo</mat-label>
+          <input matInput type="number" formControlName="periodo" />
+        </mat-form-field>
+
+        <mat-dialog-actions class="px-6 pb-6 flex justify-end space-x-4">
+          <button mat-button mat-dialog-close>Cancelar</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="editForm.invalid">
+            Guardar
+          </button>
+        </mat-dialog-actions>
+      </form>
+    </mat-tab>
+
+    <!-- Pestaña Carga Masiva -->
+    <mat-tab label="Carga masiva" *ngIf="!isEditMode">
+      <div class="flex flex-col items-center py-6 space-y-4">
+        <p class="text-center">Sube un fichero Excel (.xlsx)</p>
+        <input type="file" accept=".xls,.xlsx" (change)="onFileSelected($event)" class="cursor-pointer" />
+        <button mat-flat-button color="primary" (click)="onUpload()" class="bg-yellow-600 text-white cursor-pointer">
+          Subir
+        </button>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</mat-dialog-content>
