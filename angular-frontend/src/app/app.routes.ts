@@ -19,6 +19,7 @@ import { InformesListComponent } from './dashboard-admin/informes/informes-list.
 import { SancionesListComponent } from './dashboard-admin/sanciones/sanciones-list.component';
 import { EntrenamientosListComponent } from './dashboard-admin/entrenamientos/entrenamientos-list.component';
 import { SimulacrosListComponent } from './dashboard-admin/simulacros/simulacros-list.component';
+import { FisicaListComponent } from './dashboard-admin/fisica/fisica-list.component';
 
 
 export const routes: Routes = [
@@ -97,6 +98,12 @@ export const routes: Routes = [
       roles: ['ROLE_ADMIN', 'ROLE_CLASIFICACION'],
       animation: 'Simulacros'
     }
+  },
+  {
+    path: 'admin/fisicas',
+    component: FisicaListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_ADMIN', 'ROLE_CLASIFICACION'] }
   },
   {
     path: 'admin',

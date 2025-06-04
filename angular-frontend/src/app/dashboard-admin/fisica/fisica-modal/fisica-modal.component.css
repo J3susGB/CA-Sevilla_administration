@@ -1,0 +1,13 @@
+.custom-dialog-container {
+  max-width: 800px !important;
+  width: 95vw;
+}
+
+mat-form-field {
+  display: block;
+}
+
+mat-checkbox {
+  margin-top: 1rem;
+  display: block;
+}

@@ -119,6 +119,8 @@ class FisicaController extends AbstractController
             return $this->json(['status' => 'error', 'error' => ['message' => 'Archivo no encontrado']], 400);
         }
 
+        ini_set('memory_limit', '-1'); // sin límite, no recomendado para producción
+
         $tmpPath = sys_get_temp_dir() . '/' . uniqid('fisica_', true) . '.' . $file->getClientOriginalExtension();
         $file->move(\dirname($tmpPath), \basename($tmpPath));
 
@@ -126,29 +128,35 @@ class FisicaController extends AbstractController
         $rows  = $sheet->toArray();
         $headers = array_map('strtoupper', array_map('trim', array_shift($rows)));
 
-        // Detectamos si la columna VELOCIDAD está presente
-        $hasVelocidad = in_array('VELOCIDAD', $headers);
+        // Validación de columnas obligatorias
+        $requeridas = ['NIF', 'CATEGORIA', 'CONVOCATORIA', 'YOYO', 'REPESCA'];
+        foreach ($requeridas as $col) {
+            if (!in_array($col, $headers)) {
+                return $this->json([
+                    'status' => 'error',
+                    'error'  => "Columna '$col' no encontrada en el Excel"
+                ], 400);
+            }
+        }
 
-        // Mapa de índice para columnas (por si el orden cambia)
+        $hasVelocidad = in_array('VELOCIDAD', $headers);
         $map = array_flip($headers);
 
         $created = [];
         $updated = [];
         $ignored = [];
-
-        // Agrupar filas por clave: categoria_id + convocatoria
         $agrupadas = [];
 
         foreach ($rows as $i => $row) {
             $rowNum = $i + 2;
 
             try {
-                $nif        = mb_strtoupper(trim((string) $row[$map['NIF']] ?? ''));
-                $catRaw     = ucfirst(mb_strtolower(trim((string) $row[$map['CATEGORIA']] ?? '')));
-                $convRaw    = (string) $row[$map['CONVOCATORIA']] ?? '';
-                $repeRaw    = (string) $row[$map['REPESCA']] ?? '';
-                $yoyoRaw    = (string) $row[$map['YOYO']] ?? '';
-                $velRaw     = $hasVelocidad ? (string) $row[$map['VELOCIDAD']] ?? '' : null;
+                $nif        = mb_strtoupper(trim((string) ($row[$map['NIF']] ?? '')));
+                $catRaw     = ucfirst(mb_strtolower(trim((string) ($row[$map['CATEGORIA']] ?? ''))));
+                $convRaw    = (string) ($row[$map['CONVOCATORIA']] ?? '');
+                $repeRaw    = (string) ($row[$map['REPESCA']] ?? '');
+                $yoyoRaw    = (string) ($row[$map['YOYO']] ?? '');
+                $velRaw     = $hasVelocidad ? (string) ($row[$map['VELOCIDAD']] ?? '') : null;
 
                 if (!$nif || !$catRaw || !$convRaw || $yoyoRaw === '') {
                     $ignored[] = ['row' => $rowNum, 'reason' => 'Datos incompletos'];
@@ -173,12 +181,12 @@ class FisicaController extends AbstractController
                     continue;
                 }
 
-                $repesca = filter_var($repeRaw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
-                $yoyo = (float) str_replace(',', '.', $yoyoRaw);
+                $repesca   = filter_var($repeRaw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
+                $yoyo      = (float) str_replace(',', '.', $yoyoRaw);
                 $velocidad = $hasVelocidad ? (float) str_replace(',', '.', $velRaw) : 0.00;
 
                 $clave = $cat->getId() . '|' . $conv;
-                $agrupadas[$clave]['categoria'] = $cat;
+                $agrupadas[$clave]['categoria']    = $cat;
                 $agrupadas[$clave]['convocatoria'] = $conv;
                 $agrupadas[$clave]['rows'][] = [
                     'row'       => $rowNum,
@@ -189,21 +197,24 @@ class FisicaController extends AbstractController
                     'velocidad' => $velocidad
                 ];
             } catch (\Throwable $e) {
-                $ignored[] = ['row' => $rowNum, 'reason' => 'Error interno'];
+                $ignored[] = [
+                    'row'    => $rowNum,
+                    'reason' => 'Excepción: ' . $e->getMessage()
+                ];
             }
         }
 
         foreach ($agrupadas as $clave => $grupo) {
-            $cat = $grupo['categoria'];
+            $cat  = $grupo['categoria'];
             $conv = $grupo['convocatoria'];
             $procesados = [];
 
             foreach ($grupo['rows'] as $fila) {
                 $arb = $fila['arbitro'];
                 $fisica = $this->fisicaRepo->findOneBy([
-                    'arbitro' => $arb,
-                    'categoria' => $cat,
-                    'convocatoria' => $conv
+                    'arbitro'     => $arb,
+                    'categoria'   => $cat,
+                    'convocatoria'=> $conv
                 ]);
 
                 if ($fisica) {
@@ -212,7 +223,7 @@ class FisicaController extends AbstractController
                         ->setRepesca($fila['repesca']);
                     $updated[] = ['row' => $fila['row'], 'nif' => $fila['nif']];
                 } else {
-                    $fisica = (new Fisica())
+                    $fisica = (new \App\Entity\Fisica())
                         ->setArbitro($arb)
                         ->setCategoria($cat)
                         ->setConvocatoria($conv)
@@ -227,7 +238,6 @@ class FisicaController extends AbstractController
                 $procesados[] = $arb->getId();
             }
 
-            // Insertar faltantes para esta categoría + convocatoria
             $faltantes = $this->arbRepo->findBy(['categoria' => $cat]);
             foreach ($faltantes as $arb) {
                 if (in_array($arb->getId(), $procesados, true)) continue;
@@ -239,7 +249,7 @@ class FisicaController extends AbstractController
                 ]);
                 if ($yaExiste) continue;
 
-                $nuevo = (new Fisica())
+                $nuevo = (new \App\Entity\Fisica())
                     ->setArbitro($arb)
                     ->setCategoria($cat)
                     ->setConvocatoria($conv)
