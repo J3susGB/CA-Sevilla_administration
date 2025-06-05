@@ -1,0 +1,72 @@
+<h2 mat-dialog-title class="text-2xl font-bold text-center border-b border-gray-200 pt-4 pb-2">
+  {{ isEditMode ? 'EDITAR OBSERVACIÓN' : 'CREAR OBSERVACIÓN' }}
+</h2>
+
+<mat-dialog-content class="px-6 py-4">
+  <mat-tab-group class="mb-6">
+    <!-- Pestaña Individual -->
+    <mat-tab label="Individual">
+      <form [formGroup]="observacionForm" (ngSubmit)="onCreate()">
+        <!-- Código -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Código</mat-label>
+          <input matInput formControlName="codigo" />
+          <mat-error *ngIf="observacionForm.get('codigo')?.hasError('required')">
+            Obligatorio
+          </mat-error>
+          <mat-error *ngIf="observacionForm.get('codigo')?.hasError('maxlength')">
+            Máximo 10 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Descripción -->
+        <mat-form-field appearance="fill" class="w-full mb-4">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="descripcion" rows="1"></textarea>
+          <mat-error *ngIf="observacionForm.get('descripcion')?.hasError('required')">
+            Obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Categoría -->
+        <mat-form-field appearance="fill" class="w-full mb-32">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="categoria_id">
+            <mat-option *ngFor="let c of categories" [value]="c.id">
+              {{ c.nombre }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="observacionForm.get('categoria_id')?.hasError('required')">
+            Obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Acciones -->
+        <mat-dialog-actions class="px-6 pb-6 flex justify-end space-x-4">
+          <button mat-button mat-dialog-close class="text-gray-600 cursor-pointer">
+            Cancelar
+          </button>
+          <button mat-flat-button color="primary"
+                  class="bg-blue-600 text-white cursor-pointer"
+                  type="submit" [disabled]="observacionForm.invalid">
+            {{ isEditMode ? 'Guardar cambios' : 'Crear' }}
+          </button>
+        </mat-dialog-actions>
+      </form>
+    </mat-tab>
+
+    <!-- Pestaña Carga masiva -->
+    <mat-tab label="Carga masiva" *ngIf="!isEditMode">
+      <div class="flex flex-col items-center py-6 space-y-4">
+        <p class="text-center">Sube un fichero Excel (.xlsx)</p>
+        <input type="file" accept=".xls,.xlsx" (change)="onFileSelected($event)" class="cursor-pointer" />
+        <button mat-flat-button color="primary"
+                type="button"
+                class="bg-yellow-600 text-white cursor-pointer"
+                (click)="onUpload()">
+          Subir
+        </button>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
