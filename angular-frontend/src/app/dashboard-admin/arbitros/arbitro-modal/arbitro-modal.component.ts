@@ -12,11 +12,11 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA
 } from '@angular/material/dialog';
-import { MatTabsModule }      from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule }     from '@angular/material/input';
-import { MatSelectModule }    from '@angular/material/select';
-import { MatButtonModule }    from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 import { ArbitroService, Arbitro } from '../../../services/arbitro.service';
 import { CategoriaService, Categoria } from '../../../services/categoria.service';
@@ -49,7 +49,7 @@ export class ArbitroModalComponent implements OnInit {
     private catSvc: CategoriaService,
     private dialogRef: MatDialogRef<ArbitroModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { arbitro?: Arbitro }
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Modo edición si recibimos arbitro
@@ -59,7 +59,7 @@ export class ArbitroModalComponent implements OnInit {
     this.arbitroForm = this.fb.group({
       nif: [
         this.data?.arbitro?.nif || '',
-        [ Validators.required, Validators.minLength(9), Validators.maxLength(10) ]
+        [Validators.required, Validators.minLength(9), Validators.maxLength(10)]
       ],
       name: [
         this.data?.arbitro?.name || '',
@@ -71,6 +71,10 @@ export class ArbitroModalComponent implements OnInit {
       ],
       second_surname: [
         this.data?.arbitro?.second_surname || ''
+      ],
+      sexo: [
+        this.data?.arbitro?.sexo || '',
+        Validators.required
       ],
       categoria_id: [
         this.data?.arbitro?.categoria_id || '',

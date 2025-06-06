@@ -55,6 +55,7 @@ final class ArbitroController extends AbstractController
             'name'           => $a->getName(),
             'first_surname'  => $a->getFirstSurname(),
             'second_surname' => $a->getSecondSurname(),
+            'sexo'           => $a->getSexo(),
             'categoria_id'   => $a->getCategoria()->getId(),
         ], $arbitros);
 
@@ -81,6 +82,7 @@ final class ArbitroController extends AbstractController
                 'name'           => $arbitro->getName(),
                 'first_surname'  => $arbitro->getFirstSurname(),
                 'second_surname' => $arbitro->getSecondSurname(),
+                'sexo'           => $a->getSexo(),
                 'categoria_id'   => $arbitro->getCategoria()->getId(),
             ]
         ]);
@@ -101,13 +103,14 @@ final class ArbitroController extends AbstractController
             empty($data['nif']) ||
             empty($data['name']) ||
             empty($data['first_surname']) ||
-            empty($data['categoria_id'])
+            empty($data['categoria_id']) ||
+            empty($data['sexo'])
         ) {
             return $this->json([
                 'status' => 'error',
                 'error'  => [
                     'code'    => 400,
-                    'message' => 'Campos obligatorios: nif, name, first_surname, categoria_id'
+                    'message' => 'Campos obligatorios: nif, name, first_surname, categoria_id, sexo'
                 ]
             ], 400);
         }
@@ -125,6 +128,7 @@ final class ArbitroController extends AbstractController
             ->setName($data['name'])
             ->setFirstSurname($data['first_surname'])
             ->setSecondSurname($data['second_surname'] ?? null)
+            ->setSexo($data['sexo'])
             ->setCategoria($categoria);
 
         $this->em->persist($arbitro);
@@ -179,6 +183,10 @@ final class ArbitroController extends AbstractController
             $data['second_surname'] !== $arbitro->getSecondSurname()
         ) {
             $arbitro->setSecondSurname($data['second_surname'] ?? null);
+        }
+
+        if (array_key_exists('sexo', $data) && $data['sexo'] !== $arbitro->getSexo()) {
+            $arbitro->setSexo($data['sexo']);
         }
 
         if (array_key_exists('categoria_id', $data)) {
@@ -262,7 +270,7 @@ final class ArbitroController extends AbstractController
                     continue;
                 }
 
-                // 2) Parseo de "Nombre" ➡ name, first_surname, second_surname
+                // 1) Parseo de nombre completo ➡ name, first_surname, second_surname
                 $raw = trim((string)$row[2]);
                 $givenName     = '';
                 $firstSurname  = '';
@@ -286,7 +294,7 @@ final class ArbitroController extends AbstractController
                     }
                 }
 
-                // 2.b) Extraer NIF (columna índice 1)
+                // 2) NIF (columna 1)
                 $nifRaw = trim((string)$row[1]);
                 if ($nifRaw === '') {
                     $ignored[] = ['row' => $rowNum, 'reason' => 'NIF vacío'];
@@ -294,7 +302,19 @@ final class ArbitroController extends AbstractController
                 }
                 $nifNormalized = mb_strtoupper($nifRaw);
 
-                // 3) Normalizar y buscar categoría (columna índice 13)
+                // 3) Sexo (columna 3)
+                $sexoRaw = trim((string)$row[3]);
+                $sexoNormalized = mb_strtoupper($sexoRaw);
+                if (!in_array($sexoNormalized, ['MASCULINO', 'FEMENINO'])) {
+                    $ignored[] = [
+                        'row' => $rowNum,
+                        'nif' => $nifRaw,
+                        'reason' => "Sexo inválido: “{$sexoRaw}”. Debe ser MASCULINO o FEMENINO"
+                    ];
+                    continue;
+                }
+
+                // 4) Categoría (columna 13)
                 $catRaw    = trim((string)$row[13]);
                 $catName   = ucfirst(strtolower($catRaw));
                 $categoria = $this->categoriasRepository->findOneBy(['name' => $catName]);
@@ -307,7 +327,7 @@ final class ArbitroController extends AbstractController
                     continue;
                 }
 
-                // 4) Comprobar duplicado por NIF
+                // 5) Comprobar duplicado por NIF
                 if ($this->repository->findOneBy(['nif' => $nifNormalized])) {
                     $ignored[] = [
                         'row'    => $rowNum,
@@ -317,12 +337,13 @@ final class ArbitroController extends AbstractController
                     continue;
                 }
 
-                // 5) Crear y persistir nuevo árbitro
+                // 6) Crear y persistir árbitro
                 $arb = (new Arbitros())
                     ->setNif($nifRaw)
                     ->setName($givenName)
                     ->setFirstSurname($firstSurname)
                     ->setSecondSurname($secondSurname)
+                    ->setSexo($sexoNormalized)
                     ->setCategoria($categoria);
 
                 $this->em->persist($arb);
@@ -332,11 +353,12 @@ final class ArbitroController extends AbstractController
                     'name'           => $givenName,
                     'first_surname'  => $firstSurname,
                     'second_surname' => $secondSurname,
+                    'sexo'           => $sexoNormalized,
                     'categoria_id'   => $categoria->getId(),
                 ];
             }
 
-            // 6) Guardar en base de datos
+            // 7) Guardar en base de datos
             $this->em->flush();
 
             return $this->json([
@@ -363,4 +385,5 @@ final class ArbitroController extends AbstractController
             }
         }
     }
+
 }

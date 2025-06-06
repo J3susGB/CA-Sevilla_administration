@@ -33,6 +33,25 @@ class Arbitros
     #[ORM\Column(type: 'string', length: 20, unique: true, nullable: true)]
     private ?string $nif = null;
 
+    #[ORM\Column(type: 'string', length: 10)]
+    private ?string $sexo = null;
+
+    public function getSexo(): ?string
+    {
+        return $this->sexo;
+    }
+
+    public function setSexo(string $sexo): static
+    {
+        $sexoNormalizado = mb_strtoupper($sexo);
+        if (!in_array($sexoNormalizado, ['MASCULINO', 'FEMENINO'])) {
+            throw new \InvalidArgumentException('Sexo inválido. Solo se permite MASCULINO o FEMENINO.');
+        }
+
+        $this->sexo = $sexoNormalizado;
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -109,6 +128,10 @@ class Arbitros
 
         if ($this->nif !== null) {
             $this->nif = mb_strtoupper($this->nif);
+        }
+
+        if ($this->sexo !== null) {
+            $this->sexo = mb_strtoupper($this->sexo);
         }
     }
 }

@@ -33,6 +33,19 @@ class TecnicosRepository extends ServiceEntityRepository
         }
     }
 
+    public function findOneByArbitroAndConvocatoria($arbitro, int $convocatoria): ?Tecnicos
+    {
+        return $this->createQueryBuilder('t')
+            ->join('t.session', 's')
+            ->where('t.arbitro = :arb')
+            ->andWhere('s.examNumber = :conv')
+            ->setParameter('arb', $arbitro)
+            ->setParameter('conv', $convocatoria)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     // Ejemplo de método personalizado:
     // /**
     //  * @return Tecnicos[] Returns all notas de un árbitro en una sesión concreta

@@ -8,6 +8,7 @@ export interface Arbitro {
   name: string;
   first_surname: string;
   second_surname?: string;
+  sexo: 'MASCULINO' | 'FEMENINO';
   categoria_id: number;
   categoria_name?: string;  // lo usaremos para mapear el nombre
 }

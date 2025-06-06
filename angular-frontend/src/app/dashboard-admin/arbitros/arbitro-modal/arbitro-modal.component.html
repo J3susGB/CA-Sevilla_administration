@@ -48,6 +48,18 @@
           <input matInput formControlName="second_surname" />
         </mat-form-field>
 
+        <!-- Sexo -->
+        <mat-form-field appearance="fill" class="w-full mb-24">
+          <mat-label>Sexo</mat-label>
+          <mat-select formControlName="sexo">
+            <mat-option value="MASCULINO">Masculino</mat-option>
+            <mat-option value="FEMENINO">Femenino</mat-option>
+          </mat-select>
+          <mat-error *ngIf="arbitroForm.get('sexo')?.hasError('required')">
+            Obligatorio
+          </mat-error>
+        </mat-form-field>
+
         <!-- Categoría -->
         <mat-form-field appearance="fill" class="w-full mb-44">
           <mat-label>Categoría</mat-label>
