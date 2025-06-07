@@ -207,7 +207,7 @@ class ClasificacionService
         if (file_exists($logoPath)) {
             $drawing = new Drawing();
             $drawing->setPath($logoPath);
-            $drawing->setHeight(80);
+            $drawing->setHeight(120);
             $drawing->setCoordinates('A1');
             $drawing->setWorksheet($sheet);
         }
@@ -777,20 +777,119 @@ class ClasificacionService
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Clasificación');
 
+        // 1. Insertar logo si existe
+        $logoPath = __DIR__ . '/../../public/assets/logo_rfaf.png';
+        if (file_exists($logoPath)) {
+            $drawing = new Drawing();
+            $drawing->setPath($logoPath);
+            $drawing->setHeight(120);
+            $drawing->setCoordinates('A1');
+            $drawing->setWorksheet($sheet);
+        }
+
         $headers = [
-            "Nº", "CÓDIGO", "ÁRBITRO/A",
-            "TÉCNICO 1\nACIERTOS", "TÉCNICO 1\nBONIFICACIÓN",
-            "FÍSICO 1\nYO-YO", "FÍSICO 1\nBONIFICACIÓN",
-            "TÉCNICO 2\nNOTA", "TÉCNICO 2\nBONIFICACIÓN",
-            "FÍSICO 2\nYO-YO", "FÍSICO 2\nBONIFICACIÓN",
-            "TÉCNICO 3\nNOTA", "TÉCNICO 3\nBONIFICACIÓN",
-            "FÍSICO 3\nYO-YO", "FÍSICO 3\nVEL.", "FÍSICO 3\nBONIFICACIÓN",
-            "CLASES", "CLASES\nBONIFICACIÓN",
-            "CARTUJA\nASISTENCIA", "CARTUJA\nSIMULACROS", "CARTUJA\nBONIFICACIÓN",
+            "N", "CÓDIGO", "ÁRBITRO/A",
+            "ACIERTOS", "BONIFICACIÓN",
+            "YO-YO", "BONIFICACIÓN",
+            "NOTA", "BONIFICACIÓN",
+            "YO-YO", "BONIFICACIÓN",
+            "NOTA", "BONIFICACIÓN",
+            "YO-YO", "MEDIA VEL.", "BONIFICACIÓN",
+            "CLASES", "BONIFICACIÓN",
+            "ASISTENCIA", "SIMULACROS", "BONIFICACIÓN",
             "TEST ONLINE", "SANCIONES", "PUNTOS", "OBSERVACIONES"
         ];
 
-        $sheet->fromArray($headers, null, 'A1');
+        $sheet->mergeCells("D9:E9");
+        $sheet->setCellValue("D9", "TÉCNICO 1");
+
+        $sheet->mergeCells("F9:G9");
+        $sheet->setCellValue("F9", "FÍSICO 1");
+
+        $sheet->mergeCells("H9:I9");
+        $sheet->setCellValue("H9", "TÉCNICO 2");
+
+        $sheet->mergeCells("J9:K9");
+        $sheet->setCellValue("J9", "FÍSICO 2");
+
+        $sheet->mergeCells("L9:M9");
+        $sheet->setCellValue("L9", "TÉCNICO 3");
+
+        $sheet->mergeCells("N9:P9");
+        $sheet->setCellValue("N9", "FÍSICO 3");
+
+        $sheet->mergeCells("Q9:R9");
+        $sheet->setCellValue("Q9", "CLASES");
+
+        $sheet->mergeCells("S9:U9");
+        $sheet->setCellValue("S9", "CARTUJA");
+
+        foreach (['D9', 'F9', 'H9', 'J9', 'L9', 'N9', 'Q9', 'S9'] as $cell) {
+            $sheet->getStyle($cell)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ],
+                'font' => ['bold' => true],
+            ]);
+        }
+
+        // Estilos para filas 9 y 10
+        $sheet->getRowDimension(9)->setRowHeight(13.00);
+        $sheet->getRowDimension(10)->setRowHeight(135.24);
+
+        $startRow = 10;
+        $sheet->fromArray($headers, null, "A{$startRow}");
+
+        // Estilo general para la fila 10 (alineación centrada sin rotación)
+        $sheet->getStyle("A10:Y10")->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => false,
+                'textRotation' => 255 // apilado verticalmente
+            ],
+            'font' => [
+                'bold' => true,
+                'size' => 7
+            ]
+
+        ]);
+
+        // Estilo general para la fila 9 
+        $sheet->getStyle("D9:U9")->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => false,
+            ],
+            'font' => [
+                'bold' => true,
+                'size' => 8
+            ]
+        ]);
+
+        // Aplicar estilos por bloque de columnas 
+        $colores = [
+            'A' => 'FFFFFF', 'B' => 'FFFFFF', 'C' => 'FFFFFF',
+            'D' => 'E2EFDA', 'E' => 'E2EFDA',
+            'F' => 'DDEBF7', 'G' => 'DDEBF7', 
+            'H' => 'FFF2CC', 'I' => 'FFF2CC',
+            'J' => 'E6E1F9', 'K' => 'E6E1F9',
+            'L' => 'FCE4D6', 'M' => 'FCE4D6',
+            'N' => 'D9E1F2', 'O' => 'D9E1F2', 'P' => 'D9E1F2',
+            'Q' => 'CCFFCC', 'R' => 'CCFFCC', 
+            'S' => 'FFCCCC', 'T' => 'FFCCCC', 'U' => 'FFCCCC',
+            'V' => 'FFFFFF', 'W' => 'FFFFFF', 'X' => 'FFFFFF', 'Z' => 'FFFFFF'
+        ];
+
+        foreach ($colores as $col => $color) {
+            $sheet->getStyle("{$col}9")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($color);
+        }
+
+        foreach ($colores as $col => $color) {
+            $sheet->getStyle("{$col}10")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($color);
+        }
 
         $arbitros = $this->arbRepo->findBy(['categoria' => $categoria]);
         
@@ -799,7 +898,7 @@ class ClasificacionService
         foreach ($arbitros as $arb) {
             $nif     = $arb->getNif();
             $codigo  = strtoupper(substr($nif, -4));
-            $nombre  = sprintf('%s, %s', $arb->getFirstSurname(), $arb->getName());
+            $nombre  = sprintf('%s, %s', $arb->getFirstSurname() . ' ' . $arb->getSecondSurname(), $arb->getName());
             $sexo    = strtoupper($arb->getSexo());
 
             // Técnico 1
@@ -964,23 +1063,204 @@ class ClasificacionService
         // Ordenamos los datos por 'puntos' de mayor a menor
         usort($datos, fn($a, $b) => $b['puntos'] <=> $a['puntos']);
 
-        $rowIndex = 2;
+        $rowIndex = 11;
         $n = 1;
 
         foreach ($datos as $dato) {
             $fila = $dato['fila'];
             $fila[0] = $n++; // Colocamos el número de orden (Nº)
             $sheet->fromArray($fila, null, "A{$rowIndex}");
+
+            //Formato a los números de la tabla
+            foreach ([
+                'E'  => '0.00', // Bonificación T1
+                'F'  => '0.0',  // Yoyo F1
+                'G'  => '0.00', // Bono F1
+                'H'  => '0.00', // Nota T2
+                'I'  => '0.00', // Bono T2
+                'J'  => '0.0',  // Yoyo F2
+                'K'  => '0.00', // Bono F2
+                'L'  => '0.00', // Nota T3
+                'M'  => '0.00', // Bono T3
+                'N'  => '0.0',  // Yoyo F3
+                'O'  => '0.00', // Vel F3
+                'P'  => '0.00', // Bono F3
+                'R'  => '0.00', // Bono Clases
+                'T'  => '0.00', // Simulacros Cartuja
+                'U'  => '0.00', // Bono Cartuja
+                'V'  => '0.00', // Bono test
+                'W'  => '0.00'  // Sanciones
+
+            ] as $col => $format) {
+                $sheet->getStyle("{$col}{$rowIndex}")
+                    ->getNumberFormat()
+                    ->setFormatCode($format);
+            }
+
+            // Tamaño de letra 9 pt en cada fila desde la 11
+           $sheet->getStyle("A{$rowIndex}:Y{$rowIndex}")
+            ->getFont()
+            ->setSize(9);
+
             $rowIndex++;
         }
 
+        $lastRow = $sheet->getHighestRow();
+
+        //Bloques para borde exterior medio grueso
+        $bloques = [
+            'A9:A'   . $lastRow,
+            'B9:B'   . $lastRow,
+            'C9:C'   . $lastRow,
+            'D9:E'   . $lastRow,
+            'F9:G'   . $lastRow,
+            'H9:I'   . $lastRow,
+            'J9:K'   . $lastRow,
+            'L9:M'   . $lastRow,
+            'N9:P'   . $lastRow,
+            'Q9:R'   . $lastRow,
+            'S9:U'   . $lastRow,
+            'V9:V'   . $lastRow,
+            'W9:W' . $lastRow,
+            'X9:X' . $lastRow,
+            'Y9:Y' . $lastRow,
+        ];
+
+        foreach ($bloques as $rango) {
+            $sheet->getStyle($rango)->applyFromArray([
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_MEDIUM,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ],
+            ]);
+        }
+
+        //Separador de columnas dentro de bloques discontinuo
+        $columnasDiscontinuas = [
+            'D', 'F', 'H', 'J', 'L', 'N', 'O', 'Q', 'S', 'T'
+        ];
+
+        foreach ($columnasDiscontinuas as $col) {
+            $sheet->getStyle("{$col}9:{$col}{$lastRow}")->applyFromArray([
+                'borders' => [
+                    'right' => [
+                        'borderStyle' => Border::BORDER_DASHED,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ],
+            ]);
+        }
+
+        // Borde inferior de fila 10
+        $sheet->getStyle("A10:Y10")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_HAIR,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+
+        //Color de fondo de filas impares
+        for ($fila = 11; $fila <= $lastRow; $fila++) {
+            if ($fila % 2 !== 0) { // Solo filas impares
+                $sheet->getStyle("A{$fila}:Y{$fila}")->getFill()->setFillType(Fill::FILL_SOLID);
+                $sheet->getStyle("A{$fila}:Y{$fila}")->getFill()->getStartColor()->setRGB('F5F5F5');
+            }
+        }
+
+        $lastCol = $sheet->getHighestColumn();
         $lastColumn = $sheet->getHighestColumn();
-        foreach (range('A', $lastColumn) as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
+        
+        $sheet->getStyle("A10:{$lastCol}{$lastRow}")->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+            ->setVertical(Alignment::VERTICAL_CENTER);
+
+        // Ahora que se han escrito los datos: aplicar bordes y autosize
+        $lastRow = $sheet->getHighestRow();
+
+        //Anchura de columnas
+        $columns = [];
+        $col = 'A';
+        while ($col !== 'Z') { // 'Z' es la columna siguiente a 'Y'
+            $columns[] = $col;
+            $col++;
+        }
+
+        foreach ($columns as $col) {
+            switch ($col) {
+                case 'C':
+                    $sheet->getColumnDimension($col)->setAutoSize(false);
+                    $sheet->getColumnDimension($col)->setWidth(27.64); // ≈ 7.49 cm
+                    break;
+                case in_array($col, ['B', 'X']):
+                    $sheet->getColumnDimension($col)->setAutoSize(false);
+                    $sheet->getColumnDimension($col)->setWidth(5.6); // ≈ 1.52 cm
+                    break;
+                default:
+                    $sheet->getColumnDimension($col)->setAutoSize(false);
+                    $sheet->getColumnDimension($col)->setWidth(4.97); // ≈ 1.32 cm
+                    break;
+            }
         }
 
         $filename = 'clasificacion_' . strtolower($categoria->getName()) . '.xlsx';
         $filePath = sys_get_temp_dir() . '/' . $filename;
+
+        // Leyenda Observaciones
+        $sheet->mergeCells('Q1:Y1');
+        $sheet->setCellValue('Q1', 'LEYENDA OBSERVACIONES');
+        $sheet->getStyle('Q1')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 9],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        $sheet->mergeCells('Q2:Y2');
+        $sheet->setCellValue('Q2', 'NO APTO ASCENSO');
+        $sheet->getStyle('Q2')->applyFromArray([
+            'font' => ['bold' => true, 'italic' => true, 'size' => 8],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        $leyenda = [
+            ' (1) Técnico',
+            ' (2) Mínimo Senior',
+            ' (3) Pruebas físicas',
+            ' (4) Circular 3 (edad)'
+        ];
+
+        $row = 3;
+        foreach ($leyenda as $texto) {
+            $sheet->mergeCells("Q{$row}:Y{$row}");
+            $sheet->setCellValue("Q{$row}", $texto); 
+            $sheet->getStyle("Q{$row}")->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
+                'font' => ['size' => 7],
+            ]);
+            $row++;
+        }
+
+        // Borde al cuadro completo de leyenda
+        $sheet->getStyle('Q1:Y6')->applyFromArray([
+            'borders' => [
+                'outline' => [
+                    'borderStyle' => Border::BORDER_HAIR,
+                    'color' => ['argb' => 'FF000000']
+                ]
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'F9F9F9']
+            ]
+        ]);
 
         (new Xlsx($spreadsheet))->save($filePath);
         return $filePath;

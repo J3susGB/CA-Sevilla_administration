@@ -48,7 +48,7 @@ class AuthController extends AbstractController
 
         $em->flush();
 
-        $resetUrl = "http://localhost:4200/reset-password?token=$token"; // AJUSTA ESTA URL EN PRODUCCIÓN
+        $resetUrl = "http://localhost:4200/reset-password?token=$token"; 
 
         $emailMessage = (new Email())
             ->from('jgomezbeltran88@gmail.com')
