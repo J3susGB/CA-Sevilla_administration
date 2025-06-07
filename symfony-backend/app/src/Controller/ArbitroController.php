@@ -386,4 +386,26 @@ final class ArbitroController extends AbstractController
         }
     }
 
+    // Resetear la tabla árbitros - Solo ADMIN
+    #[Route('/truncate', name: 'arbitros_truncate', methods: ['POST'])]
+    public function truncate(): JsonResponse
+    {
+        if (! $this->isGranted('ROLE_ADMIN')) {
+            return $this->json([
+                'status' => 'error',
+                'error'  => ['code' => 403, 'message' => 'Solo ROLE_ADMIN puede truncar árbitros']
+            ], 403);
+        }
+
+        $conn = $this->em->getConnection();
+        $platform = $conn->getDatabasePlatform();
+
+        $conn->executeStatement($platform->getTruncateTableSQL('arbitros', true));
+
+        return $this->json([
+            'status' => 'success',
+            'data'   => ['message' => 'Tabla arbitros reseteada correctamente']
+        ]);
+    }
+
 }
