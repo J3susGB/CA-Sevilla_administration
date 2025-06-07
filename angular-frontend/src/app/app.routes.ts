@@ -22,11 +22,19 @@ import { SimulacrosListComponent } from './dashboard-admin/simulacros/simulacros
 import { FisicaListComponent } from './dashboard-admin/fisica/fisica-list.component';
 import { ObservacionService } from './services/observacion.service';
 import { ObservacionesListComponent } from './dashboard-admin/observaciones/observaciones-list.component';
+import { ResetPasswordComponent } from './auth/reset-password.component'; 
 
 
 export const routes: Routes = [
+  //Login
   { path: '', component: LoginComponent, pathMatch: 'full' },
+
+  //No autorizado
   { path: 'unauthorized', component: UnauthorizedComponent },
+
+  //Reset password
+  { path: 'reset-password', component: ResetPasswordComponent },
+
   {
     path: 'admin/users',
     component: UsersListComponent,

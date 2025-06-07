@@ -51,12 +51,12 @@ security:
 
     # CONTROL DE ACCESO A RUTAS
     access_control:
-        # Acceso público (sin autenticación) al endpoint de login
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-
         # Recuperacion de contraseña
         - { path: ^/api/reset-request, roles: PUBLIC_ACCESS }
         - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }
+        
+        # Acceso público (sin autenticación) al endpoint de login
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
 
         # Cualquier otra ruta bajo /api requiere autenticación JWT completa
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

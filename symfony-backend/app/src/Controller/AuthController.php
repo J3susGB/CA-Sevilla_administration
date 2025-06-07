@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/api')]
 class AuthController extends AbstractController
@@ -23,55 +24,61 @@ class AuthController extends AbstractController
         MailerInterface $mailer
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
-        $email = $data['email'] ?? null;
+        $username = $data['email'] ?? null; // Recibes el campo del formulario que pone "Usuario"
 
-        if (!$email) {
-            return $this->json(['status' => 'error', 'message' => 'Email requerido'], 400);
+        if (!$username) {
+            return $this->json(['status' => 'error', 'message' => 'Nombre de usuario requerido'], 400);
         }
 
-        $user = $userRepo->findOneBy(['email' => $email]);
+        // Buscar por username, no por email
+        $user = $userRepo->findOneBy(['username' => $username]);
         if (!$user) {
             return $this->json(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
         }
 
+        $email = $user->getEmail();
+        if (!$email) {
+            return $this->json(['status' => 'error', 'message' => 'Este usuario no tiene correo electrónico asociado'], 400);
+        }
+
+        // Generar token de reseteo
         $token = Uuid::v4()->toRfc4122();
         $user->setResetToken($token);
         $user->setResetTokenExpiresAt((new \DateTime())->modify('+1 hour'));
 
         $em->flush();
 
-        $resetUrl = "http://localhost:4200/reset-password?token=$token"; // AJUSTA URL FRONT
+        $resetUrl = "http://localhost:4200/reset-password?token=$token"; // AJUSTA ESTA URL EN PRODUCCIÓN
 
         $emailMessage = (new Email())
-        ->from('jgomezbeltran88@gmail.com')
-        ->to($user->getEmail())
-        ->subject('🔐 Recuperación de contraseña')
-        ->html("
-            <div style=\"font-family: Arial, sans-serif; font-size: 15px; color: #333;\">
-                <p>Hola <strong>{$user->getUsername()}</strong>,</p>
+            ->from('jgomezbeltran88@gmail.com')
+            ->to($email)
+            ->subject('🔐 Recuperación de contraseña')
+            ->html("
+                <div style=\"font-family: Arial, sans-serif; font-size: 15px; color: #333;\">
+                    <p>Hola <strong>{$user->getUsername()}</strong>,</p>
 
-                <p>Hemos recibido una solicitud para restablecer tu contraseña.</p>
+                    <p>Hemos recibido una solicitud para restablecer tu contraseña.</p>
 
-                <p style=\"text-align: center; margin: 20px 0;\">
-                    <a href=\"$resetUrl\" style=\"
-                        background-color: #4F46E5;
-                        color: white;
-                        padding: 10px 20px;
-                        text-decoration: none;
-                        border-radius: 5px;
-                        display: inline-block;
-                        font-weight: bold;
-                    \">
-                        🔒 Haz clic aquí para restablecer tu contraseña
-                    </a>
-                </p>
+                    <p style=\"text-align: center; margin: 20px 0;\">
+                        <a href=\"$resetUrl\" style=\"
+                            background-color: #4F46E5;
+                            color: white;
+                            padding: 10px 20px;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            display: inline-block;
+                            font-weight: bold;
+                        \">
+                            🔒 Haz clic aquí para restablecer tu contraseña
+                        </a>
+                    </p>
 
-                <p>Este enlace es válido durante 1 hora. Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
+                    <p>Este enlace es válido durante 1 hora. Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
 
-                <p style=\"font-size: 12px; color: #999;\">CA-Sevilla Administración</p>
-            </div>
-        ");
-
+                    <p style=\"font-size: 12px; color: #999;\">CA-Sevilla Administración</p>
+                </div>
+            ");
 
         $mailer->send($emailMessage);
 
