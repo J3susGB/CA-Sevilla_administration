@@ -176,7 +176,7 @@ export class SesionesListComponent implements OnInit {
       if (updated) {
         this.loadSessions();
         this.loadTotals();
-        this.toastService.show('Asistencia añadida ✅', 'success');
+        this.toastService.show('Asistencia añadida con éxito', 'success');
       }
     });
   }
@@ -191,7 +191,7 @@ export class SesionesListComponent implements OnInit {
       if (updated) {
         this.loadSessions();
         this.loadTotals();
-        this.toastService.show('Asistencia actualizada ✅', 'success');
+        this.toastService.show('Asistencia actualizada con éxito', 'success');
       }
     });
   }
@@ -214,10 +214,10 @@ export class SesionesListComponent implements OnInit {
         next: () => {
           this.loadSessions();
           this.loadTotals();
-          this.toastService.show('Asistencia eliminada 🗑️', 'error');
+          this.toastService.show('Asistencia eliminada con éxito', 'error');
         },
         error: () => {
-          this.toastService.show('Error al eliminar asistencia ❌', 'error');
+          this.toastService.show('Error al eliminar asistencia', 'error');
         }
       });
     });
@@ -233,7 +233,7 @@ export class SesionesListComponent implements OnInit {
       if (updated) {
         this.loadSessions();
         this.loadTotals();
-        this.toastService.show('Carga masiva completada ✅', 'success');
+        this.toastService.show('Carga masiva completada con éxito', 'success');
       }
     });
   }

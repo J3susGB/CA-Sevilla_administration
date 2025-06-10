@@ -114,7 +114,7 @@ export class UsersListComponent implements OnInit {
       .subscribe(created => {
         if (created) {
           this.load();
-          this.toastService.show('Añadido con éxito ✅', 'success');
+          this.toastService.show('Usuario añadido con éxito', 'success');
         }
       });
   }
@@ -130,7 +130,7 @@ export class UsersListComponent implements OnInit {
       .subscribe(done => {
         if (done) {
           this.load();
-          this.toastService.show('Actualizado con éxito ✅', 'success');
+          this.toastService.show('Usuario actualizado con éxito', 'success');
         }
       });
   }
@@ -160,11 +160,11 @@ export class UsersListComponent implements OnInit {
         this.userService.delete(u.id!).subscribe({
           next: () => {
             this.load();
-            this.toastService.show('Usuario eliminado con éxito 🗑️', 'error');
+            this.toastService.show('Usuario eliminado con éxito', 'error');
           },
           error: err => {
             console.error(err);
-            this.toastService.show('Error al eliminar usuario ❌', 'error');
+            this.toastService.show('Error al eliminar usuario', 'error');
           }
         });
       });

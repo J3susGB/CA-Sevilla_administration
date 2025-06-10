@@ -113,14 +113,14 @@ export class BonificacionesListComponent implements OnInit {
   }
 
   addBonificacion(): void {
-    console.log('✨ addBonificacion llamado');  // <-- mira en la consola del navegador
+    console.log('✨ addBonificacion llamado');  
     this.dialog.open(BonificacionModalComponent, {
       width: '600px',
       panelClass: 'user-modal-dialog'
     }).afterClosed().subscribe(created => {
       console.log('✨ modal cerrado, created =', created);
       if (created) {
-        this.toastService.show('Bonificación añadida ✅', 'success');
+        this.toastService.show('Bonificación añadida con éxito', 'success');
         this.load();
       }
     });
@@ -133,7 +133,7 @@ export class BonificacionesListComponent implements OnInit {
       panelClass: 'user-modal-dialog'
     }).afterClosed().subscribe(updated => {
       if (updated) {
-        this.toastService.show('Bonificación actualizada ✅', 'success');
+        this.toastService.show('Bonificación actualizada con éxito', 'success');
         this.load();
       }
     });
@@ -154,11 +154,11 @@ export class BonificacionesListComponent implements OnInit {
       if (!confirmed) return;
       this.bonifSvc.delete(b.id).subscribe({
         next: () => {
-          this.toastService.show('Bonificación eliminada 🗑️', 'error');
+          this.toastService.show('Bonificación eliminada con éxito', 'error');
           this.load();
         },
         error: () => {
-          this.toastService.show('Error al eliminar bonificación ❌', 'error');
+          this.toastService.show('Error al eliminar bonificación', 'error');
         }
       });
     });

@@ -124,7 +124,7 @@ export class FisicaListComponent implements OnInit {
     }).afterClosed().subscribe(created => {
       if (created) {
         this.load();
-        this.toastService.show('Nota física añadida ✅', 'success');
+        this.toastService.show('Nota física añadida con éxito', 'success');
       }
     });
   }
@@ -137,7 +137,7 @@ export class FisicaListComponent implements OnInit {
     }).afterClosed().subscribe(updated => {
       if (updated) {
         this.load();
-        this.toastService.show('Nota física actualizada ✅', 'success');
+        this.toastService.show('Nota física actualizada con éxito', 'success');
       }
     });
   }
@@ -162,10 +162,10 @@ export class FisicaListComponent implements OnInit {
       this.fisicaSvc.delete(f.id).subscribe({
         next: () => {
           this.load();
-          this.toastService.show('Nota física eliminada 🗑️', 'error');
+          this.toastService.show('Nota física eliminada con éxito', 'error');
         },
         error: () => {
-          this.toastService.show('Error al eliminar nota ❌', 'error');
+          this.toastService.show('Error al eliminar nota', 'error');
         }
       });
     });

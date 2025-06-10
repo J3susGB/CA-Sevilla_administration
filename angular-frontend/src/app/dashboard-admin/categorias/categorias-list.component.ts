@@ -99,7 +99,7 @@ export class CategoriasListComponent implements OnInit {
             .subscribe(created => {
                 if (created) {
                     this.load();
-                    this.toastService.show('Añadida con éxito ✅ ', 'success');
+                    this.toastService.show('Categoría añadida con éxito', 'success');
                 }
             });
     }
@@ -114,7 +114,7 @@ export class CategoriasListComponent implements OnInit {
             .subscribe(updated => {
                 if (updated) {
                     this.load();
-                    this.toastService.show('Actualizada con éxito ✅ ', 'success');
+                    this.toastService.show('Categoría actualizada con éxito', 'success');
                 }
             });
 
@@ -139,10 +139,10 @@ export class CategoriasListComponent implements OnInit {
                 this.catSvc.delete(c.id!).subscribe({
                     next: () => {
                         this.load();
-                        this.toastService.show('Eliminada con éxito 🗑️', 'error');
+                        this.toastService.show('Categoría eliminada con éxito', 'error');
                     },
                     error: () => {
-                        this.toastService.show('Error al eliminar categoría ❌', 'error');
+                        this.toastService.show('Error al eliminar categoría', 'error');
                     }
                 });
             });

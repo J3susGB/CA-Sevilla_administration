@@ -30,7 +30,7 @@ import { AuthService } from '../../services/auth.service';
         MatButtonModule,
         MatDialogModule,
         MatIconModule,
-        ConfirmDialogComponent // si lo usas
+        ConfirmDialogComponent 
     ],
     templateUrl: './informes-list.component.html',
     styleUrls: ['./informes-list.component.css']
@@ -111,7 +111,7 @@ export class InformesListComponent implements OnInit {
         }).afterClosed().subscribe(success => {
             if (success) {
                 this.load();
-                this.toastService.show('Informe creado ✅', 'success');
+                this.toastService.show('Informe creado con éxito', 'success');
             }
         });
     }
@@ -124,7 +124,7 @@ export class InformesListComponent implements OnInit {
         }).afterClosed().subscribe(success => {
             if (success) {
                 this.load();
-                this.toastService.show('Informe actualizado ✅', 'success');
+                this.toastService.show('Informe actualizado con éxito', 'success');
             }
         });
     }
@@ -150,10 +150,10 @@ export class InformesListComponent implements OnInit {
             this.infSvc.delete(inf.id).subscribe({
                 next: () => {
                     this.load();
-                    this.toastService.show('Informe eliminado 🗑️', 'error');
+                    this.toastService.show('Informe eliminado con éxito', 'error');
                 },
                 error: () => {
-                    this.toastService.show('Error al eliminar informe ❌', 'error');
+                    this.toastService.show('Error al eliminar informe', 'error');
                 }
             });
         });

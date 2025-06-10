@@ -181,7 +181,7 @@ export class TestsListComponent implements OnInit {
         if (ok) {
           this.loadSessions();
           this.loadTotals();
-          this.toast.show('Nota añadida ✅', 'success');
+          this.toast.show('Nota añadida con éxito', 'success');
         }
       });
   }
@@ -196,7 +196,7 @@ export class TestsListComponent implements OnInit {
         if (ok) {
           this.loadSessions();
           this.loadTotals();
-          this.toast.show('Nota actualizada ✅', 'success');
+          this.toast.show('Nota actualizada con éxito', 'success');
         }
       });
   }
@@ -218,8 +218,8 @@ export class TestsListComponent implements OnInit {
         this.testSvc.delete(id).subscribe(() => {
           this.loadSessions();
           this.loadTotals();
-          this.toast.show('Nota eliminada 🗑️', 'error');
-        }, () => this.toast.show('Error al eliminar ❌', 'error'));
+          this.toast.show('Nota eliminada con éxito', 'error');
+        }, () => this.toast.show('Error al eliminar', 'error'));
       });
   }
 
@@ -235,7 +235,7 @@ export class TestsListComponent implements OnInit {
         if (ok) {
           this.loadSessions();
           this.loadTotals();
-          this.toast.show('Carga masiva completada ✅', 'success');
+          this.toast.show('Carga masiva completada con éxito', 'success');
         }
       });
   }

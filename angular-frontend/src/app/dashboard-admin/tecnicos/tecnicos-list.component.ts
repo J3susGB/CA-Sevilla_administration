@@ -285,7 +285,7 @@ export class TecnicosListComponent implements OnInit {
         if (ok) {
           this.loadSessions();
           this.loadReport();
-          this.toast.show('Nota añadida ✅', 'success');
+          this.toast.show('Nota añadida con éxito', 'success');
         }
       });
   }
@@ -301,7 +301,7 @@ export class TecnicosListComponent implements OnInit {
         if (ok) {
           this.loadSessions();
           this.loadReport();
-          this.toast.show('Nota actualizada ✅', 'success');
+          this.toast.show('Nota actualizada con éxito', 'success');
         }
       });
   }
@@ -319,7 +319,7 @@ export class TecnicosListComponent implements OnInit {
         if (ok) {
           this.loadSessions();
           this.loadReport();
-          this.toast.show('Carga masiva completada ✅', 'success');
+          this.toast.show('Carga masiva completada con éxito', 'success');
         }
       });
   }
@@ -343,7 +343,7 @@ export class TecnicosListComponent implements OnInit {
           this.loadSessions();
           this.loadReport();
           this.toast.show('Nota eliminada 🗑️', 'error');
-        }, () => this.toast.show('Error al eliminar ❌', 'error'));
+        }, () => this.toast.show('Error al eliminar', 'error'));
       });
   }
 

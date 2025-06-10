@@ -147,7 +147,7 @@ export class ArbitrosListComponent implements OnInit {
       .subscribe(created => {
         if (created) {
           this.load();
-          this.toastService.show('Añadido con éxito ✅', 'success');
+          this.toastService.show('Arbitro añadido con éxito', 'success');
         }
       });
   }
@@ -164,7 +164,7 @@ export class ArbitrosListComponent implements OnInit {
       .subscribe(done => {
         if (done) {
           this.load();
-          this.toastService.show('Actualizado con éxito ✅', 'success');
+          this.toastService.show('Aarbitro actualizado con éxito', 'success');
         }
       });
   }
@@ -199,10 +199,10 @@ export class ArbitrosListComponent implements OnInit {
         this.arbSvc.delete(a.id).subscribe({
           next: () => {
             this.load();
-            this.toastService.show('Árbitro eliminado con éxito 🗑️', 'error');
+            this.toastService.show('Árbitro eliminado con éxito', 'error');
           },
           error: () => {
-            this.toastService.show('Error al eliminar árbitro ❌', 'error');
+            this.toastService.show('Error al eliminar árbitro', 'error');
           }
         });
       });

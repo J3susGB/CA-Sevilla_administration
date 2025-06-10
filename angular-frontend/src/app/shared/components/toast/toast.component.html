@@ -13,5 +13,16 @@
     }"
   >
     {{ toast.message }}
+
+  <!-- Barra de progreso animada -->
+  <div
+      class="absolute bottom-0 left-0 h-[1.5px] animate-progressBar"
+      [style.animationDuration]="toast.duration + 'ms'"
+      [ngClass]="{
+        'bg-green-700': toast.type === 'success',
+        'bg-red-700': toast.type === 'error',
+        'bg-blue-700': toast.type === 'info'
+      }"
+    ></div>
   </div>
 </div>

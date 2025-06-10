@@ -117,7 +117,7 @@ export class SimulacrosListComponent implements OnInit {
       .subscribe(created => {
         if (created) {
           this.load();
-          this.toastService.show('Simulacro añadido ✅', 'success');
+          this.toastService.show('Simulacro añadido con éxito', 'success');
         }
       });
   }
@@ -133,7 +133,7 @@ export class SimulacrosListComponent implements OnInit {
       .subscribe(updated => {
         if (updated) {
           this.load();
-          this.toastService.show('Simulacro actualizado ✅', 'success');
+          this.toastService.show('Simulacro actualizado con éxito', 'success');
         }
       });
   }
@@ -162,10 +162,10 @@ export class SimulacrosListComponent implements OnInit {
         this.simSvc.delete(s.id).subscribe({
           next: () => {
             this.load();
-            this.toastService.show('Simulacro eliminado 🗑️', 'error');
+            this.toastService.show('Simulacro eliminado con éxito', 'error');
           },
           error: () => {
-            this.toastService.show('Error al eliminar ❌', 'error');
+            this.toastService.show('Error al eliminar', 'error');
           }
         });
       });

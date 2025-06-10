@@ -118,7 +118,7 @@ export class EntrenamientosListComponent implements OnInit {
       .subscribe(created => {
         if (created) {
           this.load();
-          this.toastService.show('Añadido ✅', 'success');
+          this.toastService.show('Asistencia añadida con éxito', 'success');
         }
       });
   }
@@ -134,7 +134,7 @@ export class EntrenamientosListComponent implements OnInit {
       .subscribe(updated => {
         if (updated) {
           this.load();
-          this.toastService.show('Actualizado ✅', 'success');
+          this.toastService.show('Asistencia actualizada con éxito', 'success');
         }
       });
   }
@@ -163,10 +163,10 @@ export class EntrenamientosListComponent implements OnInit {
         this.entSvc.delete(e.id).subscribe({
           next: () => {
             this.load();
-            this.toastService.show('Eliminado 🗑️', 'error');
+            this.toastService.show('Asistencia eliminada con éxito', 'error');
           },
           error: () => {
-            this.toastService.show('Error al eliminar ❌', 'error');
+            this.toastService.show('Error al eliminar', 'error');
           }
         });
       });

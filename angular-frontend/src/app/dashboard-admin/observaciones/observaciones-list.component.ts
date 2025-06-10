@@ -100,7 +100,7 @@ export class ObservacionesListComponent implements OnInit {
       .afterClosed().subscribe(created => {
         if (created) {
           this.load();
-          this.toastService.show('Observación añadida ✅', 'success');
+          this.toastService.show('Observación añadida con éxito', 'success');
         }
       });
   }
@@ -115,7 +115,7 @@ export class ObservacionesListComponent implements OnInit {
       .afterClosed().subscribe(updated => {
         if (updated) {
           this.load();
-          this.toastService.show('Actualizada ✅', 'success');
+          this.toastService.show('Observación Actualizada con éxito', 'success');
         }
       });
   }
@@ -141,10 +141,10 @@ export class ObservacionesListComponent implements OnInit {
         this.obsSvc.delete(o.id).subscribe({
           next: () => {
             this.load();
-            this.toastService.show('Observación eliminada 🗑️', 'error');
+            this.toastService.show('Observación eliminada con éxito', 'error');
           },
           error: () => {
-            this.toastService.show('Error al eliminar ❌', 'error');
+            this.toastService.show('Error al eliminar', 'error');
           }
         });
       });

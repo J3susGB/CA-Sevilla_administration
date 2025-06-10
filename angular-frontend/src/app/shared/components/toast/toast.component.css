@@ -5,3 +5,18 @@
 div > div {
   pointer-events: auto;
 }
+
+@keyframes progressBar {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-progressBar {
+  animation-name: progressBar;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}

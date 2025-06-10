@@ -103,7 +103,7 @@ export class SancionesListComponent implements OnInit {
         }).afterClosed().subscribe(done => {
             if (done) {
                 this.load();
-                this.toastService.show('Sanción añadida ✅', 'success');
+                this.toastService.show('Sanción añadida con éxito', 'success');
             }
         });
     }
@@ -121,7 +121,7 @@ export class SancionesListComponent implements OnInit {
             }).afterClosed().subscribe(done => {
                 if (done) {
                     this.load();
-                    this.toastService.show('Sanción actualizada ✅', 'success');
+                    this.toastService.show('Sanción actualizada con éxito', 'success');
                 }
             });
         });
@@ -146,9 +146,9 @@ export class SancionesListComponent implements OnInit {
             this.sancionSvc.delete(s.id!).subscribe({
                 next: () => {
                     this.load();
-                    this.toastService.show('Sanción eliminada 🗑️', 'error');
+                    this.toastService.show('Sanción eliminada con éxito', 'error');
                 },
-                error: () => this.toastService.show('Error al eliminar ❌', 'error')
+                error: () => this.toastService.show('Error al eliminar', 'error')
             });
         });
     }
