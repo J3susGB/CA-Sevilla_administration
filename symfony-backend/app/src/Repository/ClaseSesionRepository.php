@@ -12,4 +12,11 @@ class ClaseSesionRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ClaseSesion::class);
     }
+
+    public function truncate(): void
+    {
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\ClaseSesion')
+            ->execute();
+    }
 }

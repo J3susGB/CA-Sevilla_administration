@@ -16,28 +16,10 @@ class TestSessionRepository extends ServiceEntityRepository
         parent::__construct($registry, TestSession::class);
     }
 
-//    /**
-//     * @return TestSession[] Returns an array of TestSession objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?TestSession
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function truncate(): void
+    {
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\TestSession')
+            ->execute();
+    }
 }

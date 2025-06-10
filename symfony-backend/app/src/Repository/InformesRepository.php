@@ -37,18 +37,11 @@ class InformesRepository extends ServiceEntityRepository
         }
     }
 
-    // Ejemplo de método adicional (opcional) para contar informes de un árbitro:
-    /*
-    public function countByArbitro(int $arbitroId): int
+    public function truncate(): void
     {
-        return (int) $this->createQueryBuilder('i')
-            ->select('COUNT(i.id)')
-            ->andWhere('i.arbitro = :arbId')
-            ->setParameter('arbId', $arbitroId)
-            ->getQuery()
-            ->getSingleScalarResult();
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\Informes')
+            ->execute();
     }
-    */
 
-    // Aquí puedes añadir cualquier consulta personalizada que necesites.
 }

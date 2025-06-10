@@ -28,4 +28,12 @@ class SancionesRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function truncate(): void
+    {
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\Sanciones')
+            ->execute();
+    }
+
 }

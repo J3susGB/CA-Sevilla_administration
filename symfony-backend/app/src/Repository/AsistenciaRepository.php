@@ -13,4 +13,12 @@ class AsistenciaRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Asistencia::class);
     }
+
+    public function truncate(): void
+    {
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\Asistencia')
+            ->execute();
+    }
+
 }

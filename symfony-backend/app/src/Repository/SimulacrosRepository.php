@@ -35,4 +35,12 @@ class SimulacrosRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function truncate(): void
+    {
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\Simulacros')
+            ->execute();
+    }
+
 }

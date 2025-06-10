@@ -32,20 +32,11 @@ class TecnicoSessionRepository extends ServiceEntityRepository
             $this->_em->flush();
         }
     }
-
-    // Aquí puedes añadir tus métodos personalizados, por ejemplo:
-    // /**
-    //  * @return TecnicoSession[] Returns an array of sessions for una categoría y examen dado
-    //  */
-    // public function findByCategoryAndExam($categoria, int $examNumber): array
-    // {
-    //     return $this->createQueryBuilder('s')
-    //         ->andWhere('s.categoria = :cat')
-    //         ->andWhere('s.examNumber = :num')
-    //         ->setParameters(['cat' => $categoria, 'num' => $examNumber])
-    //         ->orderBy('s.fecha', 'DESC')
-    //         ->getQuery()
-    //         ->getResult()
-    //     ;
-    // }
+    
+    public function truncate(): void
+    {
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\TecnicoSession')
+            ->execute();
+    }
 }

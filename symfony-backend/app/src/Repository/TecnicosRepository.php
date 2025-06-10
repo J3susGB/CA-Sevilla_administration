@@ -46,18 +46,11 @@ class TecnicosRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    // Ejemplo de método personalizado:
-    // /**
-    //  * @return Tecnicos[] Returns all notas de un árbitro en una sesión concreta
-    //  */
-    // public function findBySessionAndReferee($session, $arbitro): array
-    // {
-    //     return $this->createQueryBuilder('t')
-    //         ->andWhere('t.session = :sess')
-    //         ->andWhere('t.arbitro = :arb')
-    //         ->setParameters(['sess' => $session, 'arb' => $arbitro])
-    //         ->getQuery()
-    //         ->getResult()
-    //     ;
-    // }
+    public function truncate(): void
+    {
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\Tecnicos')
+            ->execute();
+    }
+
 }

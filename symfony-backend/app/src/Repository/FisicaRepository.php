@@ -17,4 +17,11 @@ class FisicaRepository extends ServiceEntityRepository
         parent::__construct($registry, Fisica::class);
     }
 
+    public function truncate(): void
+    {
+        $this->getEntityManager()
+            ->createQuery('DELETE FROM App\Entity\Fisica')
+            ->execute();
+    }
+
 }
