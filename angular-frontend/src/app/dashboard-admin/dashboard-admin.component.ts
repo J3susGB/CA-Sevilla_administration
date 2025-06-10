@@ -55,10 +55,10 @@ export class DashboardAdminComponent {
 
       this.http.post('http://localhost:8000/api/admin/reset', {}).subscribe({
         next: () => {
-          this.toastService.show('Base de datos reseteada correctamente ✅', 'success');
+          this.toastService.show('Temporada actualizada', 'success');
         },
         error: () => {
-          this.toastService.show('Error al resetear base de datos ❌', 'error');
+          this.toastService.show('Error al resetear base de datos', 'error');
         }
       });
     });
